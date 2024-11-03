@@ -1,35 +1,31 @@
-import express, { Request, Response } from 'express';
-import { db } from './db/db';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import 'dotenv/config';
+import express, { NextFunction, Request, Response } from 'express';
+import { userRouter } from './routes/user';
+
+const PORT = process.env.PORT;
 
 const app = express();
 
 app.use(express.json());
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Hello from Express!');
+app.use('/user', userRouter);
+
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}!`);
 });
 
-app.get('/getAllUsers', async (req: Request, res: Response) => {
-  const users = await db.user.findMany();
-
-  res.json(users);
-});
-
-app.post('/register', async (req: Request, res: Response) => {
-  const {
-    user: { email, password },
-  }: { user: { email: string; password: string } } = req.body;
-
-  const newUser = await db.user.create({
-    data: {
-      email,
-      password,
-    },
-  });
-
-  res.json(newUser);
-});
-
-app.listen(3000, () => {
-  console.log('App is listening on Port 3000!');
+app.use((err: unknown, req: Request, res: Response, _next: NextFunction) => {
+  if (err instanceof PrismaClientKnownRequestError) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error.', details: err.meta });
+  } else if (err instanceof Error) {
+    console.error(err);
+    res
+      .status(500)
+      .json({ error: 'Server error.', message: err.message, stack: err.stack });
+  } else {
+    console.error(err);
+    res.status(500).json({ error: 'Unknown error occurred.' });
+  }
 });
