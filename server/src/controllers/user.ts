@@ -1,15 +1,16 @@
 import { NextFunction, Request, Response } from 'express';
 import { db } from '../db/db';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { z } from 'zod';
+import bcrypt from 'bcrypt';
 
-interface RegisterBody {
-  user: {
-    email: string;
-    password: string;
-  };
-}
+const RegisterSchema = z.object({
+  user: z.object({
+    email: z.string().email(),
+    password: z.string().min(8).max(50),
+  }),
+});
 
-// TODO: Add in password hashing.
 // TODO: Return cookie to client that contains JWT.
 export async function register(
   req: Request,
@@ -17,27 +18,44 @@ export async function register(
   next: NextFunction
 ) {
   try {
+    const validatedData = RegisterSchema.parse(req.body);
+
     const {
       user: { email, password },
-    }: RegisterBody = req.body;
+    } = validatedData;
+
+    const hash = await bcrypt.hash(password, 10);
 
     const user = await db.user.create({
       data: {
         email,
-        password,
+        password: hash,
+      },
+      select: {
+        id: true,
+        email: true,
+        createdAt: true,
+        updatedAt: true,
+        password: false,
       },
     });
 
     res.status(201).json(user);
+    return;
   } catch (err) {
     if (err instanceof PrismaClientKnownRequestError) {
       if (err.code === 'P2002') {
         res.status(400).json({ error: 'Email is already in use.' });
         return;
       }
-    } else {
-      next(err);
     }
+
+    if (err instanceof z.ZodError) {
+      res.status(409).json({ error: 'Invalid input', details: err.issues });
+      return;
+    }
+
+    next(err);
   }
 }
 
