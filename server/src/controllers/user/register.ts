@@ -1,8 +1,14 @@
 import { NextFunction, Request, Response } from 'express';
-import { db } from '../db/db';
+import { db } from '../../db/db';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { z } from 'zod';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import 'dotenv/config';
+
+const JWT_SECRET = process.env.JWT_SECRET as string;
+const JWT_EXPIRES_IN = '1h';
+const COOKIE_MAX_AGE = 60 * 60 * 1000;
 
 const RegisterSchema = z.object({
   user: z.object({
@@ -11,7 +17,6 @@ const RegisterSchema = z.object({
   }),
 });
 
-// TODO: Return cookie to client that contains JWT.
 export async function register(
   req: Request,
   res: Response,
@@ -40,6 +45,21 @@ export async function register(
       },
     });
 
+    const payload = {
+      id: user.id,
+      createdAt: user.createdAt,
+      email: user.email,
+    };
+
+    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: COOKIE_MAX_AGE,
+    });
+
     res.status(201).json(user);
     return;
   } catch (err) {
@@ -57,9 +77,4 @@ export async function register(
 
     next(err);
   }
-}
-
-// TODO: Implement this.
-export async function login(req: Request, res: Response) {
-  res.send('NYI');
 }
