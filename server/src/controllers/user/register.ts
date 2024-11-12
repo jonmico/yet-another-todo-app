@@ -60,7 +60,7 @@ export async function register(
       maxAge: COOKIE_MAX_AGE,
     });
 
-    res.status(201).json(user);
+    res.status(201).json({ user });
     return;
   } catch (err) {
     if (err instanceof PrismaClientKnownRequestError) {
