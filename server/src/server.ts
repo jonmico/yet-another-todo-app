@@ -1,7 +1,7 @@
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import 'dotenv/config';
 import express, { NextFunction, Request, Response } from 'express';
-import { userRouter } from './routes/user';
+import { userRouter } from './routes/user-routes';
 import cors, { CorsOptions } from 'cors';
 
 const PORT = process.env.PORT;
