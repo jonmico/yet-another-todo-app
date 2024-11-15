@@ -30,6 +30,7 @@ export default function RegisterPage() {
       if (!res.ok) {
         const errorData: { error: string } = await res.json();
         setError(errorData.error);
+        return;
       }
 
       const data: {
@@ -38,8 +39,6 @@ export default function RegisterPage() {
           email: string;
         };
       } = await res.json();
-
-      console.log(data);
 
       setUser({ id: data.user.id, email: data.user.email });
     } catch (err) {
@@ -85,11 +84,13 @@ interface UserProps {
   user: User;
 }
 
-function User(props: UserProps) {
+function User({ user }: UserProps) {
+  const { email, id } = user;
+
   return (
     <div>
-      <h3>{props.user.email}</h3>
-      <h4>{props.user.id}</h4>
+      <h3>{email}</h3>
+      <h4>{id}</h4>
     </div>
   );
 }
