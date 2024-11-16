@@ -6,7 +6,7 @@ export interface AuthState {
   isFetching: boolean;
 }
 
-export function authReducer(state: AuthState, action: AuthAction) {
+export function authReducer(state: AuthState, action: AuthAction): AuthState {
   switch (action.type) {
     case 'auth/createUser': {
       const {
@@ -19,8 +19,7 @@ export function authReducer(state: AuthState, action: AuthAction) {
         isFetching: false,
       };
     }
-    default: {
+    default:
       throw new TypeError('Unrecognized type.');
-    }
   }
 }

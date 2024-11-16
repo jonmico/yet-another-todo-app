@@ -1,53 +1,15 @@
 import { useState } from 'react';
-
-interface User {
-  id: number;
-  email: string;
-}
+import { useAuth } from '../hooks/useAuth';
 
 export default function RegisterPage() {
-  const [error, setError] = useState('');
-  const [user, setUser] = useState<User | null>(null);
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { register, authState } = useAuth();
 
   async function handleSubmit(evt: React.FormEvent<HTMLFormElement>) {
     evt.preventDefault();
 
-    const user = { email, password };
-
-    try {
-      const res = await fetch('http://localhost:3000/user/register', {
-        method: 'POST',
-        body: JSON.stringify({ user }),
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!res.ok) {
-        const errorData: { error: string } = await res.json();
-        setError(errorData.error);
-        return;
-      }
-
-      const data: {
-        user: {
-          id: number;
-          email: string;
-        };
-      } = await res.json();
-
-      setUser({ id: data.user.id, email: data.user.email });
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('Something went wrong.');
-      }
-    }
+    register(email, password);
   }
   return (
     <div>
@@ -75,21 +37,18 @@ export default function RegisterPage() {
         </div>
         <button type='submit'>Sign up</button>
       </form>
-      {user ? <User user={user} /> : null}
+      {authState.id ? <User id={authState.id} /> : null}
     </div>
   );
 }
 
 interface UserProps {
-  user: User;
+  id: number;
 }
 
-function User({ user }: UserProps) {
-  const { email, id } = user;
-
+function User({ id }: UserProps) {
   return (
     <div>
-      <h3>{email}</h3>
       <h4>{id}</h4>
     </div>
   );
