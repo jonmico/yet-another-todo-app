@@ -5,7 +5,6 @@ import { AuthState } from '../../reducers/auth-reducer/auth-reducer';
 export interface AuthContextInterface {
   authState: AuthState;
   authDispatch: React.Dispatch<AuthAction>;
-  register: (email: string, password: string) => void;
 }
 
 export const AuthContext = createContext<AuthContextInterface | null>(null);

@@ -10,12 +10,12 @@ export function authReducer(state: AuthState, action: AuthAction): AuthState {
   switch (action.type) {
     case 'auth/createUser': {
       const {
-        payload: { isAuthenticated, id },
+        payload: { id },
       } = action;
       return {
         ...state,
-        isAuthenticated,
         id,
+        isAuthenticated: true,
         isFetching: false,
       };
     }

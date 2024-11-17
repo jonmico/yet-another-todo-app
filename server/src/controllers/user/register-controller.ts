@@ -17,7 +17,7 @@ const RegisterSchema = z.object({
   }),
 });
 
-export async function register(
+export async function registerController(
   req: Request,
   res: Response,
   next: NextFunction
@@ -38,9 +38,9 @@ export async function register(
       },
       select: {
         id: true,
-        email: true,
+        email: false,
         createdAt: true,
-        updatedAt: true,
+        updatedAt: false,
         password: false,
       },
     });
@@ -48,7 +48,6 @@ export async function register(
     const payload = {
       id: user.id,
       createdAt: user.createdAt,
-      email: user.email,
     };
 
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
@@ -60,7 +59,7 @@ export async function register(
       maxAge: COOKIE_MAX_AGE,
     });
 
-    res.status(201).json({ user });
+    res.status(201).json({ message: 'successfully created user.', user });
     return;
   } catch (err) {
     if (err instanceof PrismaClientKnownRequestError) {

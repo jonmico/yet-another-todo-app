@@ -11,11 +11,12 @@ export async function registerApi(email: string, password: string) {
   });
 
   const data: {
+    message: string;
     user: {
       id: number;
-      email: string;
+      createdAt: Date;
     };
   } = await res.json();
 
-  return { data };
+  return data;
 }

@@ -1,15 +1,21 @@
 import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
+import { registerApi } from '../services/auth-api/register-api';
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { register, authState } = useAuth();
+  const { authState, authDispatch } = useAuth();
 
   async function handleSubmit(evt: React.FormEvent<HTMLFormElement>) {
     evt.preventDefault();
 
-    register(email, password);
+    const data = await registerApi(email, password);
+
+    authDispatch({
+      type: 'auth/createUser',
+      payload: { id: data.user.id },
+    });
   }
   return (
     <div>
