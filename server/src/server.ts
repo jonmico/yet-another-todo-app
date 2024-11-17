@@ -3,6 +3,7 @@ import 'dotenv/config';
 import express, { NextFunction, Request, Response } from 'express';
 import { userRouter } from './routes/user-routes';
 import cors, { CorsOptions } from 'cors';
+import cookieParser from 'cookie-parser';
 
 const PORT = process.env.PORT;
 
@@ -15,6 +16,7 @@ const corsOptions: CorsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.json());
+app.use(cookieParser());
 
 app.use('/user', userRouter);
 

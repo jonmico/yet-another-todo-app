@@ -1,8 +1,10 @@
 import { Router } from 'express';
-import { register } from '../controllers/user/register-controller';
-import { login } from '../controllers/user/login-controller';
+import { registerController } from '../controllers/user/register-controller';
+import { loginController } from '../controllers/user/login-controller';
+import { checkSessionController } from '../controllers/user/check-session-controller';
 
 export const userRouter = Router();
 
-userRouter.post('/register', register);
-userRouter.post('/login', login);
+userRouter.post('/register', registerController);
+userRouter.post('/login', loginController);
+userRouter.get('/checkSession', checkSessionController);
