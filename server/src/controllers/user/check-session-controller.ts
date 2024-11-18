@@ -12,13 +12,17 @@ const PayloadSchema = z.object({
   exp: z.number(),
 });
 
-export async function checkSessionController(
+export function checkSessionController(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
   try {
     const { token } = req.cookies;
+
+    if (!token) {
+      res.status(401).json({ error: 'No token provided.' });
+    }
 
     const payload = jwt.verify(token, JWT_SECRET);
 
@@ -37,12 +41,12 @@ export async function checkSessionController(
     }
 
     if (err instanceof jwt.JsonWebTokenError) {
-      res.status(400).json({ error: 'Token error.', details: err.message });
+      res.status(401).json({ error: 'Token error.', details: err.message });
       return;
     }
 
     if (err instanceof jwt.TokenExpiredError) {
-      res.status(400).json({
+      res.status(401).json({
         error: 'Token expired.',
         details: { expiredAt: err.expiredAt },
       });
