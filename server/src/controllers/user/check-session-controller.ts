@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { z } from 'zod';
 
-const JWT_SECRET = process.env.JWT_SECRET as string;
+const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET as string;
 
 const PayloadSchema = z.object({
   id: z.number(),
@@ -24,7 +24,7 @@ export function checkSessionController(
       res.status(401).json({ error: 'No token provided.' });
     }
 
-    const payload = jwt.verify(token, JWT_SECRET);
+    const payload = jwt.verify(token, ACCESS_TOKEN_SECRET);
 
     // TODO: Issue refresh token.
 
@@ -34,7 +34,6 @@ export function checkSessionController(
       .status(200)
       .json({ message: 'Active session.', id: validatedPayload.id });
   } catch (err) {
-    // TODO: Change theses error codes to something more meaningful.
     if (err instanceof z.ZodError) {
       res.status(400).json({ error: 'Invalid token.', details: err.issues });
       return;

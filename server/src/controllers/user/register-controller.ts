@@ -1,13 +1,11 @@
-import { NextFunction, Request, Response } from 'express';
-import { db } from '../../db/db';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { z } from 'zod';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 import 'dotenv/config';
+import { NextFunction, Request, Response } from 'express';
+import { z } from 'zod';
+import { db } from '../../db/db';
+import { refreshToken } from '../../utils/refresh-token';
 
-const JWT_SECRET = process.env.JWT_SECRET as string;
-const JWT_EXPIRES_IN = '1h';
 const COOKIE_MAX_AGE = 60 * 60 * 1000;
 
 const RegisterSchema = z.object({
@@ -39,6 +37,7 @@ export async function registerController(
       select: {
         id: true,
         email: false,
+        refreshTokenVersion: true,
         createdAt: true,
         updatedAt: false,
         password: false,
@@ -47,10 +46,12 @@ export async function registerController(
 
     const payload = {
       id: user.id,
-      createdAt: user.createdAt,
+      tokenVersion: user.refreshTokenVersion,
     };
 
-    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+    // TODO: Add access token
+
+    const token = refreshToken(payload);
 
     res.cookie('token', token, {
       httpOnly: true,
