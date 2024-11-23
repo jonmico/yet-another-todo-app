@@ -4,9 +4,8 @@ import 'dotenv/config';
 import { NextFunction, Request, Response } from 'express';
 import { z } from 'zod';
 import { db } from '../../db/db';
-import { refreshToken } from '../../utils/refresh-token';
-
-const COOKIE_MAX_AGE = 60 * 60 * 1000;
+import { signRefreshToken } from '../../utils/sign-refresh-token';
+import { signAccessToken } from '../../utils/sign-access-token';
 
 const RegisterSchema = z.object({
   user: z.object({
@@ -44,20 +43,30 @@ export async function registerController(
       },
     });
 
-    const payload = {
+    const refreshTokenPayload = {
       id: user.id,
       tokenVersion: user.refreshTokenVersion,
     };
 
-    // TODO: Add access token
+    const refreshToken = signRefreshToken(refreshTokenPayload);
 
-    const token = refreshToken(payload);
-
-    res.cookie('token', token, {
+    res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: COOKIE_MAX_AGE,
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+
+    const accessToken = signAccessToken({
+      id: user.id,
+      createdAt: user.createdAt,
+    });
+
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 15 * 60 * 1000, // 15min
     });
 
     res.status(201).json({ message: 'successfully created user.', user });

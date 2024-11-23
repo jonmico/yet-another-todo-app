@@ -18,21 +18,21 @@ export function checkSessionController(
   next: NextFunction
 ) {
   try {
-    const { token } = req.cookies;
+    // const { token } = req.cookies;
 
-    if (!token) {
-      res.status(401).json({ error: 'No token provided.' });
-    }
+    // if (!token) {
+    //   res.status(401).json({ error: 'No token provided.' });
+    //   return;
+    // }
 
-    const payload = jwt.verify(token, ACCESS_TOKEN_SECRET);
+    // const payload = jwt.verify(token, ACCESS_TOKEN_SECRET);
 
-    // TODO: Issue refresh token.
+    // // TODO: Issue refresh token.
 
-    const validatedPayload = PayloadSchema.parse(payload);
+    // const validatedPayload = PayloadSchema.parse(payload);
 
-    res
-      .status(200)
-      .json({ message: 'Active session.', id: validatedPayload.id });
+    res.status(200).json({ message: 'Active session.' });
+    return;
   } catch (err) {
     if (err instanceof z.ZodError) {
       res.status(400).json({ error: 'Invalid token.', details: err.issues });
