@@ -12,9 +12,10 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     async function checkSession() {
-      const data: { message: string; id: number } = await checkSessionApi();
+      const data: { isAuthenticated: boolean; user: { id: string } } =
+        await checkSessionApi();
 
-      authDispatch({ type: 'auth/createUser', payload: { id: data.id } });
+      authDispatch({ type: 'auth/createUser', payload: { id: data.user.id } });
     }
 
     checkSession();

@@ -1,7 +1,7 @@
 type CreateUser = {
   type: 'auth/createUser';
   payload: {
-    id: number;
+    id: string;
   };
 };
 

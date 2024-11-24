@@ -5,6 +5,14 @@ import { userRouter } from './routes/user-routes';
 import cors, { CorsOptions } from 'cors';
 import cookieParser from 'cookie-parser';
 
+declare module 'express' {
+  interface Request {
+    user?: {
+      id: string;
+    };
+  }
+}
+
 const PORT = process.env.PORT;
 
 const app = express();
