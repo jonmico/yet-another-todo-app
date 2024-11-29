@@ -1,7 +1,7 @@
 import { AuthAction } from './auth-actions';
 
 export interface AuthState {
-  id: number | null;
+  id: string | null;
   isAuthenticated: boolean;
   isFetching: boolean;
 }
@@ -15,6 +15,14 @@ export function authReducer(state: AuthState, action: AuthAction): AuthState {
       return {
         ...state,
         id,
+        isAuthenticated: true,
+        isFetching: false,
+      };
+    }
+    case 'auth/login': {
+      return {
+        ...state,
+        id: action.payload.id,
         isAuthenticated: true,
         isFetching: false,
       };

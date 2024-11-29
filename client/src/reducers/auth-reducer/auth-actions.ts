@@ -5,4 +5,11 @@ type CreateUser = {
   };
 };
 
-export type AuthAction = CreateUser;
+type Login = {
+  type: 'auth/login';
+  payload: {
+    id: string;
+  };
+};
+
+export type AuthAction = CreateUser | Login;

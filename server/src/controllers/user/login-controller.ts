@@ -38,7 +38,7 @@ export async function loginController(
     }
     // issue access/refresh tokens
     // send response back saying user is logged in
-    res.json({ message: 'hello!' });
+    res.json({ userId: user.id });
     return;
   } catch (err) {
     next(err);

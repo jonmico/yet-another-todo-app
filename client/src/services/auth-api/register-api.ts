@@ -13,7 +13,7 @@ export async function registerApi(email: string, password: string) {
   const data: {
     message: string;
     user: {
-      id: number;
+      id: string;
       createdAt: Date;
     };
   } = await res.json();

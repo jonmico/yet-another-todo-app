@@ -6,6 +6,7 @@ export default function IndexPage() {
       <h1>YATA</h1>
       <h4>(Yet Another Todo App)</h4>
       <Link to={'register'}>Register</Link>
+      <Link to={'login'}>Login</Link>
       <Outlet />
     </div>
   );
