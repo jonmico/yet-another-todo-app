@@ -1,51 +1,76 @@
-import { useActionState, useState } from 'react';
-import { useFormStatus } from 'react-dom';
+import { useActionState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { loginApi } from '../services/auth-api/login-api';
 
+interface LoginFormState {
+  email: string;
+  password: string;
+  errors: {
+    emailError?: string;
+    passwordError?: string;
+    general?: string;
+  };
+}
+
 export default function LoginPage() {
   const { authDispatch } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  // const [isPending, startTransition] = useTransition();
 
-  const [error, submitAction, isPending] = useActionState(
-    async (previousState, formData: FormData) => {
+  const [formState, formAction, isPending] = useActionState<
+    LoginFormState,
+    FormData
+  >(
+    async (currentState, formData) => {
       const email = formData.get('email') as string;
       const password = formData.get('password') as string;
 
+      let emailError = '';
+      if (!email) {
+        emailError = 'Please enter a valid email.';
+      }
+
+      let passwordError = '';
+      if (!password || password.length < 8) {
+        passwordError = 'Please enter a valid password.';
+      }
+
+      if (emailError || passwordError) {
+        return {
+          email,
+          password,
+          errors: {
+            emailError,
+            passwordError,
+            general: '',
+          },
+        };
+      }
+
+      // TODO: Return appropriate errors from this.
       const { userId } = await loginApi(email, password);
 
       authDispatch({ type: 'auth/login', payload: { id: userId } });
+
+      return { ...currentState, errors: {} };
     },
-    null
+    { email: '', password: '', errors: {} }
   );
-
-  // function handleSubmit(evt: React.FormEvent<HTMLFormElement>) {
-  //   evt.preventDefault();
-
-  //   startTransition(async () => {
-  //     const { userId } = await loginApi(email, password);
-
-  //     authDispatch({ type: 'auth/login', payload: { id: userId } });
-
-  //     console.log('handleSubmit function called.');
-  //   });
-  // }
 
   return (
     <div>
       <h2>Login</h2>
-      <form action={submitAction}>
-        {/* <div>
+      <form action={formAction}>
+        <div>
           <label htmlFor='email'>Email</label>
           <input
             name='email'
             id='email'
             type='email'
-            value={email}
-            onChange={(evt) => setEmail(evt.target.value)}
+            defaultValue={formState.email}
+            placeholder='Enter email'
           />
+          {formState.errors.emailError && (
+            <div>{formState.errors.emailError}</div>
+          )}
         </div>
 
         <div>
@@ -54,30 +79,15 @@ export default function LoginPage() {
             name='password'
             id='password'
             type='Password'
-            value={password}
-            onChange={(evt) => setPassword(evt.target.value)}
+            defaultValue={formState.password}
+            placeholder='Your super secure password'
           />
-        </div> */}
-        <FormInputs />
+          {formState.errors.passwordError && (
+            <div>{formState.errors.passwordError}</div>
+          )}
+        </div>
+        <button disabled={isPending}>Login</button>
       </form>
     </div>
-  );
-}
-
-function FormInputs() {
-  const { pending } = useFormStatus();
-  return (
-    <>
-      <div>
-        <label htmlFor='email'>Email</label>
-        <input name='email' id='email' type='email' />
-      </div>
-
-      <div>
-        <label htmlFor='password'>Password</label>
-        <input name='password' id='password' type='Password' />
-      </div>
-      <button disabled={pending}>Login</button>
-    </>
   );
 }
