@@ -22,8 +22,6 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ authState, authDispatch }}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext value={{ authState, authDispatch }}>{children}</AuthContext>
   );
 }
