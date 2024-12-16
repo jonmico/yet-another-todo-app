@@ -1,4 +1,12 @@
-export async function checkSessionApi() {
+interface CheckSessionApiReturn {
+  data?: {
+    isAuthenticated: boolean;
+    user: { id: string };
+  };
+  error?: string;
+}
+
+export async function checkSessionApi(): Promise<CheckSessionApiReturn> {
   try {
     const res = await fetch('http://localhost:3001/user/checkSession', {
       method: 'GET',
@@ -8,11 +16,17 @@ export async function checkSessionApi() {
       },
     });
 
+    if (!res.ok) {
+      const errorData: { error: string } = await res.json();
+      return errorData;
+    }
+
     const data: { isAuthenticated: boolean; user: { id: string } } =
       await res.json();
 
-    return data;
+    return { data, error: undefined };
   } catch (err) {
-    console.log(err);
+    console.error(err);
+    return { error: `Something went wrong: ${err}` };
   }
 }
