@@ -25,6 +25,7 @@ export async function action({ request }: Route.ActionArgs) {
     const res = await fetch(`${URL}/api/user/register`, {
       method: 'POST',
       credentials: 'include',
+      mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
       },

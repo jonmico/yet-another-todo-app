@@ -13,6 +13,7 @@ export async function checkSessionApi(): Promise<CheckSessionApiReturn> {
     const res = await fetch(`${URL}/api/user/checkSession`, {
       method: 'GET',
       credentials: 'include',
+      mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
       },
