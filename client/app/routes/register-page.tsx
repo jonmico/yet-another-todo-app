@@ -3,6 +3,8 @@ import type { Route } from './+types/register-page';
 import { use, useContext } from 'react';
 import { AuthContext } from '~/contexts/auth-context';
 
+const URL = import.meta.env.VITE_URL;
+
 interface DataType {
   error?: string;
   message?: string;
@@ -19,18 +21,22 @@ export async function action({ request }: Route.ActionArgs) {
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
 
-  const res = await fetch('http://localhost:3001/user/register', {
-    method: 'POST',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ user: { email, password } }),
-  });
+  try {
+    const res = await fetch(`${URL}/api/user/register`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ user: { email, password } }),
+    });
 
-  const data: DataType = await res.json();
+    const data: DataType = await res.json();
 
-  return data;
+    return data;
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 export default function Register({ actionData }: Route.ComponentProps) {

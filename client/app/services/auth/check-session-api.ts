@@ -1,3 +1,5 @@
+const URL = import.meta.env.VITE_URL;
+
 interface CheckSessionApiReturn {
   data?: {
     isAuthenticated: boolean;
@@ -8,7 +10,7 @@ interface CheckSessionApiReturn {
 
 export async function checkSessionApi(): Promise<CheckSessionApiReturn> {
   try {
-    const res = await fetch('http://localhost:3001/user/checkSession', {
+    const res = await fetch(`${URL}/api/user/checkSession`, {
       method: 'GET',
       credentials: 'include',
       headers: {
