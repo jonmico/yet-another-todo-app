@@ -28,6 +28,7 @@ export async function action({ request }: Route.ActionArgs) {
       mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
       },
       body: JSON.stringify({ user: { email, password } }),
     });

@@ -21,7 +21,7 @@ const corsOptions: CorsOptions = {
   origin: 'http://localhost:5173',
   credentials: true,
   methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Set-Cookie'],
 };
 
 app.use(cors(corsOptions));
