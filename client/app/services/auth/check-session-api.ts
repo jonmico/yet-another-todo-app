@@ -8,15 +8,23 @@ interface CheckSessionApiReturn {
   error?: string;
 }
 
+/*
+TODO: 
+Make checkSessionApi a POST request and send accessToken/refreshToken in JSON body.
+Receive on server and change server middleware to process req.body instead of req.cookies.
+Probably pass request object from loader to checkSessionApi, or at least the tokens from the req.
+  -> I think we could parse the cookies in the loader and then pass the strings to checkSessionApi.
+*/
+
 export async function checkSessionApi(): Promise<CheckSessionApiReturn> {
   try {
     const res = await fetch(`${URL}/api/user/checkSession`, {
-      method: 'GET',
+      method: 'POST',
       credentials: 'include',
-      mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
       },
+      body: JSON.stringify(accessToken, refreshToken),
     });
 
     if (!res.ok) {

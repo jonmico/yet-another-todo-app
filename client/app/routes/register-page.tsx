@@ -1,7 +1,5 @@
-import { Form, redirect } from 'react-router';
+import { createCookie, Form, redirect } from 'react-router';
 import type { Route } from './+types/register-page';
-import { use, useContext } from 'react';
-import { AuthContext } from '~/contexts/auth-context';
 
 const URL = import.meta.env.VITE_URL;
 
@@ -13,6 +11,8 @@ interface DataType {
     createdAt: Date;
     refreshTokenVersion: number;
   };
+  accessToken: string;
+  refreshToken: string;
 }
 
 export async function action({ request }: Route.ActionArgs) {
@@ -28,14 +28,32 @@ export async function action({ request }: Route.ActionArgs) {
       mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
       },
       body: JSON.stringify({ user: { email, password } }),
     });
 
     const data: DataType = await res.json();
 
-    return data;
+    const refreshTokenCookie = createCookie('refreshToken', {
+      httpOnly: true,
+      path: '/',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+
+    const accessTokenCookie = createCookie('accessToken', {
+      httpOnly: true,
+      path: '/',
+      sameSite: 'lax',
+      maxAge: 15 * 60 * 1000, // 15min
+    });
+
+    return redirect('/', {
+      headers: [
+        ['Set-Cookie', await refreshTokenCookie.serialize(data.refreshToken)],
+        ['Set-Cookie', await accessTokenCookie.serialize(data.accessToken)],
+      ],
+    });
   } catch (err) {
     console.error(err);
   }

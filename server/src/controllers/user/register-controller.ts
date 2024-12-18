@@ -67,7 +67,14 @@ export async function registerController(
       maxAge: 15 * 60 * 1000, // 15min
     });
 
-    res.status(201).json({ message: 'successfully created user.', user });
+    res
+      .status(201)
+      .json({
+        message: 'successfully created user.',
+        user,
+        refreshToken,
+        accessToken,
+      });
     return;
   } catch (err) {
     if (err instanceof PrismaClientKnownRequestError) {

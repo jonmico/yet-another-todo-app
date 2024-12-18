@@ -43,6 +43,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+export async function loader({ request }: Route.LoaderArgs) {}
+
 export default function App() {
   return (
     <AuthProvider>
