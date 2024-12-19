@@ -5,6 +5,11 @@ import jwt, { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import { z } from 'zod';
 import { handleRefreshToken } from '../utils/handle-refresh-token';
 
+/*
+FIXME: 
+If accessToken is expired, it is throwing ExpiredTokenError. We need to check for refreshToken and if there is one, use it to get a new accessToken. If not, return the error and make the user log in again.
+*/
+
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET as string;
 
 const CookieSchema = z.object({
@@ -23,7 +28,7 @@ export async function verifyTokens(
   next: NextFunction
 ) {
   try {
-    const cookies = CookieSchema.parse(req.cookies);
+    const cookies = CookieSchema.parse(req.body);
 
     if (!cookies.accessToken) {
       if (!cookies.refreshToken) {
@@ -58,6 +63,7 @@ export async function verifyTokens(
         error: 'Token expired.',
         details: { message: err.message, expiredAt: err.expiredAt },
       });
+      return;
     }
 
     if (err instanceof PrismaClientKnownRequestError) {
@@ -68,6 +74,7 @@ export async function verifyTokens(
           code: err.code,
         },
       });
+      return;
     }
     return next(err);
   }

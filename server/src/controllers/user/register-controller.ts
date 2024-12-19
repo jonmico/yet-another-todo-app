@@ -50,31 +50,17 @@ export async function registerController(
 
     const refreshToken = signRefreshToken(refreshTokenPayload);
 
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: false,
-      sameSite: 'none',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
-
     const accessToken = signAccessToken({
       id: user.id,
       createdAt: user.createdAt,
     });
 
-    res.cookie('accessToken', accessToken, {
-      httpOnly: false,
-      sameSite: 'none',
-      maxAge: 15 * 60 * 1000, // 15min
+    res.status(201).json({
+      message: 'successfully created user.',
+      user,
+      refreshToken,
+      accessToken,
     });
-
-    res
-      .status(201)
-      .json({
-        message: 'successfully created user.',
-        user,
-        refreshToken,
-        accessToken,
-      });
     return;
   } catch (err) {
     if (err instanceof PrismaClientKnownRequestError) {

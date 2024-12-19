@@ -23,6 +23,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   function setUser(userId: string, isAuthenticated: boolean) {
+    console.log('You are here!!');
     setUserId(userId);
     setIsAuthenticated(isAuthenticated);
   }

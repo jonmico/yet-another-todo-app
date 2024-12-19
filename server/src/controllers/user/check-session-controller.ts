@@ -7,5 +7,6 @@ export function checkSessionController(
   _next: NextFunction
 ) {
   res.json({ isAuthenticated: true, user: req.user });
+
   return;
 }

@@ -15,6 +15,20 @@ interface DataType {
   refreshToken: string;
 }
 
+export const refreshTokenCookie = createCookie('refreshToken', {
+  httpOnly: true,
+  path: '/',
+  sameSite: 'lax',
+  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+});
+
+export const accessTokenCookie = createCookie('accessToken', {
+  httpOnly: true,
+  path: '/',
+  sameSite: 'lax',
+  maxAge: 15 * 60 * 1000, // 15min
+});
+
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
 
@@ -34,20 +48,6 @@ export async function action({ request }: Route.ActionArgs) {
 
     const data: DataType = await res.json();
 
-    const refreshTokenCookie = createCookie('refreshToken', {
-      httpOnly: true,
-      path: '/',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
-
-    const accessTokenCookie = createCookie('accessToken', {
-      httpOnly: true,
-      path: '/',
-      sameSite: 'lax',
-      maxAge: 15 * 60 * 1000, // 15min
-    });
-
     return redirect('/', {
       headers: [
         ['Set-Cookie', await refreshTokenCookie.serialize(data.refreshToken)],
@@ -59,7 +59,7 @@ export async function action({ request }: Route.ActionArgs) {
   }
 }
 
-export default function Register({ actionData }: Route.ComponentProps) {
+export default function Register() {
   return (
     <>
       <Form method='post'>
@@ -73,8 +73,6 @@ export default function Register({ actionData }: Route.ComponentProps) {
         </div>
         <button type='submit'>Submit</button>
       </Form>
-      {actionData?.message}
-      {actionData?.error}
     </>
   );
 }

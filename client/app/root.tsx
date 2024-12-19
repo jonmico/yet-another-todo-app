@@ -7,9 +7,11 @@ import {
   ScrollRestoration,
 } from 'react-router';
 
+import { use, useContext, useState } from 'react';
 import type { Route } from './+types/root';
 import stylesheet from './app.css?url';
-import { AuthProvider } from './contexts/auth-context';
+import { AuthContext, AuthProvider } from './contexts/auth-context';
+import { checkSessionApi } from './services/auth/check-session-api';
 
 export const links: Route.LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -43,9 +45,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export async function loader({ request }: Route.LoaderArgs) {}
+export async function loader({ request }: Route.LoaderArgs) {
+  const data = await checkSessionApi(request);
 
-export default function App() {
+  return data;
+}
+
+export default function App({ loaderData }: Route.ComponentProps) {
   return (
     <AuthProvider>
       <Outlet />

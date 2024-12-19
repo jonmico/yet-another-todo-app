@@ -1,3 +1,5 @@
+import { accessTokenCookie, refreshTokenCookie } from '~/routes/register-page';
+
 const URL = import.meta.env.VITE_URL;
 
 interface CheckSessionApiReturn {
@@ -16,15 +18,23 @@ Probably pass request object from loader to checkSessionApi, or at least the tok
   -> I think we could parse the cookies in the loader and then pass the strings to checkSessionApi.
 */
 
-export async function checkSessionApi(): Promise<CheckSessionApiReturn> {
+export async function checkSessionApi(
+  request: Request
+): Promise<CheckSessionApiReturn> {
   try {
+    const cookieHeader = request.headers.get('Cookie');
+
+    const accessToken = await accessTokenCookie.parse(cookieHeader);
+
+    const refreshToken = await refreshTokenCookie.parse(cookieHeader);
+
     const res = await fetch(`${URL}/api/user/checkSession`, {
       method: 'POST',
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(accessToken, refreshToken),
+      body: JSON.stringify({ accessToken, refreshToken }),
     });
 
     if (!res.ok) {

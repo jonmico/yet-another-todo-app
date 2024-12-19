@@ -8,4 +8,4 @@ export const userRouter = Router();
 
 userRouter.post('/register', registerController);
 userRouter.post('/login', loginController);
-userRouter.get('/checkSession', verifyTokens, checkSessionController);
+userRouter.post('/checkSession', verifyTokens, checkSessionController);
