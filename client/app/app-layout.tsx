@@ -14,6 +14,7 @@ export default function AppLayout() {
 }
 
 function Header() {
+  const { userId } = use(AuthContext);
   return (
     <div className='p-4 flex justify-between items-center'>
       <div>
@@ -24,16 +25,18 @@ function Header() {
       </div>
       <nav>
         <ul className='flex gap-5'>
-          <>
-            <li>
-              <Link to={'login'}>Login</Link>
-            </li>
-            <li>
-              <Link to={'register'}>Register</Link>
-            </li>
-          </>
-
-          <li>Logout</li>
+          {!userId ? (
+            <>
+              <li>
+                <Link to={'login'}>Login</Link>
+              </li>
+              <li>
+                <Link to={'register'}>Register</Link>
+              </li>
+            </>
+          ) : (
+            <li>Logout</li>
+          )}
         </ul>
         <div></div>
         <div></div>
