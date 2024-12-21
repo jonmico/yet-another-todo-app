@@ -3,20 +3,12 @@ import { accessTokenCookie, refreshTokenCookie } from '~/routes/register-page';
 const URL = import.meta.env.VITE_URL;
 
 interface CheckSessionApiReturn {
-  data?: {
+  data: {
     isAuthenticated: boolean;
     user: { id: string };
-  };
-  error?: string;
+  } | null;
+  error: string | null;
 }
-
-/*
-TODO: 
-Make checkSessionApi a POST request and send accessToken/refreshToken in JSON body.
-Receive on server and change server middleware to process req.body instead of req.cookies.
-Probably pass request object from loader to checkSessionApi, or at least the tokens from the req.
-  -> I think we could parse the cookies in the loader and then pass the strings to checkSessionApi.
-*/
 
 export async function checkSessionApi(
   request: Request
@@ -39,15 +31,15 @@ export async function checkSessionApi(
 
     if (!res.ok) {
       const errorData: { error: string } = await res.json();
-      return errorData;
+      return { data: null, error: errorData.error };
     }
 
     const data: { isAuthenticated: boolean; user: { id: string } } =
       await res.json();
 
-    return { data, error: undefined };
+    return { data, error: null };
   } catch (err) {
     console.error(err);
-    return { error: `Something went wrong: ${err}` };
+    return { data: null, error: `Something went wrong: ${err}` };
   }
 }

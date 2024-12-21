@@ -52,10 +52,10 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export default function App({ loaderData }: Route.ComponentProps) {
-  const { data } = loaderData;
+  const data = loaderData;
   console.log(data);
   return (
-    <AuthProvider userId={data?.user.id}>
+    <AuthProvider userId={data.data?.user.id}>
       <Outlet />
     </AuthProvider>
   );
