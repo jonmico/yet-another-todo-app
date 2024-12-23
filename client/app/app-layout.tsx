@@ -1,5 +1,8 @@
 import { Link, Outlet, useLoaderData } from 'react-router';
 import type { loader } from './root';
+import { use } from 'react';
+import { AuthContext } from './contexts/auth-context';
+import { useAuth } from './hooks/useAuth';
 
 export default function AppLayout() {
   return (
@@ -10,16 +13,9 @@ export default function AppLayout() {
   );
 }
 
-/*
-TODO:
-Why does this useLoaderData call not work?
-*/
-
 function Header() {
-  // const { userId } = use(AuthContext);
-  const data = useLoaderData<typeof loader>();
+  const { user } = useAuth();
 
-  console.log(data);
   return (
     <div className='p-4 flex justify-between items-center'>
       <div>
@@ -30,7 +26,7 @@ function Header() {
       </div>
       <nav>
         <ul className='flex gap-5'>
-          {!data ? (
+          {!user ? (
             <>
               <li>
                 <Link to={'login'}>Login</Link>

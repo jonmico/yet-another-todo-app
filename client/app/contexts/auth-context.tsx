@@ -1,11 +1,11 @@
-import { createContext, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 
 interface AuthContextInterface {
-  userId: string | undefined;
+  user: string | null;
 }
 
 const initialState: AuthContextInterface = {
-  userId: '',
+  user: '',
 };
 
 export const AuthContext = createContext<AuthContextInterface>(initialState);
@@ -16,7 +16,15 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children, userId }: AuthProviderProps) {
-  const value = { userId };
+  const [user, setUser] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (userId) {
+      setUser(userId);
+    }
+  }, []);
+
+  const value = { user };
 
   return <AuthContext value={value}>{children}</AuthContext>;
 }
