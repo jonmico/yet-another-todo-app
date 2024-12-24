@@ -1,7 +1,4 @@
-import { Link, Outlet, useLoaderData } from 'react-router';
-import type { loader } from './root';
-import { use } from 'react';
-import { AuthContext } from './contexts/auth-context';
+import { Link, Outlet } from 'react-router';
 import { useAuth } from './hooks/useAuth';
 
 export default function AppLayout() {
