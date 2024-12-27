@@ -35,6 +35,7 @@ export async function action({ request }: Route.ActionArgs) {
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
 
+  // TODO: Pull this fetch code out into a separate function
   try {
     const res = await fetch(`${URL}/api/user/register`, {
       method: 'POST',
