@@ -1,4 +1,4 @@
-import { Form } from 'react-router';
+import { Form, redirect } from 'react-router';
 import type { Route } from './+types/login-page';
 import { login } from '~/services/auth/login';
 
@@ -14,7 +14,15 @@ export async function action({ request }: Route.ActionArgs) {
 
   const data = await login(email, password);
 
-  return data;
+  if (data.error) {
+    return { error: data.error };
+  }
+
+  if (data.userId) {
+    return redirect('/app');
+  }
+
+  return null;
 }
 
 export default function Login({ actionData }: Route.ComponentProps) {

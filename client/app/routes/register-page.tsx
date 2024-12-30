@@ -49,7 +49,7 @@ export async function action({ request }: Route.ActionArgs) {
 
     const data: DataType = await res.json();
 
-    return redirect('/', {
+    return redirect('/app', {
       headers: [
         ['Set-Cookie', await refreshTokenCookie.serialize(data.refreshToken)],
         ['Set-Cookie', await accessTokenCookie.serialize(data.accessToken)],
