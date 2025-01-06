@@ -1,6 +1,7 @@
 import { Form, redirect } from 'react-router';
-import type { Route } from './+types/login-page';
 import { login } from '~/services/auth/login';
+import type { Route } from './+types/login-page';
+import { getSession } from '~/sessions.server';
 
 // TODO: Read this - https://reactrouter.com/explanation/sessions-and-cookies
 // TODO: Set cookies.
@@ -8,6 +9,8 @@ import { login } from '~/services/auth/login';
 // TODO: Form validation/error handling.
 
 export async function action({ request }: Route.ActionArgs) {
+  const session = await getSession(request.headers.get('Cookie'));
+  console.log(session);
   const formData = await request.formData();
   const email = String(formData.get('email'));
   const password = String(formData.get('password'));
