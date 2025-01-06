@@ -1,5 +1,6 @@
-import { createCookie, Form, redirect } from 'react-router';
+import { Form, redirect } from 'react-router';
 import type { Route } from './+types/register-page';
+import { accessTokenCookie, refreshTokenCookie } from '~/cookies.server';
 
 const URL = import.meta.env.VITE_URL;
 
@@ -14,20 +15,6 @@ interface DataType {
   accessToken: string;
   refreshToken: string;
 }
-
-export const refreshTokenCookie = createCookie('refreshToken', {
-  httpOnly: true,
-  path: '/',
-  sameSite: 'lax',
-  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-});
-
-export const accessTokenCookie = createCookie('accessToken', {
-  httpOnly: true,
-  path: '/',
-  sameSite: 'lax',
-  maxAge: 15 * 60 * 1000, // 15min
-});
 
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();

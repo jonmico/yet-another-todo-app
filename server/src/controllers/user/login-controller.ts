@@ -2,6 +2,8 @@ import bcrypt from 'bcrypt';
 import { NextFunction, Request, Response } from 'express';
 import z from 'zod';
 import { db } from '../../db/db';
+import { signAccessToken } from '../../utils/sign-access-token';
+import { signRefreshToken } from '../../utils/sign-refresh-token';
 
 const LoginSchema = z.object({
   email: z.string(),
@@ -37,8 +39,18 @@ export async function loginController(
       return;
     }
     // issue access/refresh tokens
+
+    const accessToken = signAccessToken({
+      id: user.id,
+      createdAt: user.createdAt,
+    });
+
+    const refreshToken = signRefreshToken({
+      id: user.id,
+      tokenVersion: user.refreshTokenVersion,
+    });
     // send response back saying user is logged in
-    res.json({ userId: user.id });
+    res.json({ user: { userId: user.id, accessToken, refreshToken } });
     return;
   } catch (err) {
     next(err);

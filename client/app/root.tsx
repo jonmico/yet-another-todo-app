@@ -7,10 +7,9 @@ import {
   ScrollRestoration,
 } from 'react-router';
 
-import { use, useContext, useState } from 'react';
 import type { Route } from './+types/root';
 import stylesheet from './app.css?url';
-import { AuthContext, AuthProvider } from './contexts/auth-context';
+import { AuthProvider } from './contexts/auth-context';
 import { checkSessionApi } from './services/auth/check-session-api';
 
 export const links: Route.LinksFunction = () => [
@@ -53,10 +52,6 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 export default function App({ loaderData }: Route.ComponentProps) {
   const data = loaderData;
-
-  if (data.error) {
-    console.log(data.error);
-  }
 
   const { data: userData } = data;
 

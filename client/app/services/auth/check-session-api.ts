@@ -1,4 +1,4 @@
-import { accessTokenCookie, refreshTokenCookie } from '~/routes/register-page';
+import { accessTokenCookie, refreshTokenCookie } from '~/cookies.server';
 
 const URL = import.meta.env.VITE_URL;
 
@@ -7,7 +7,7 @@ interface CheckSessionApiReturn {
     isAuthenticated: boolean;
     user: { id: string };
   } | null;
-  error: string | null;
+  error: { error: string; details: string };
 }
 
 export async function checkSessionApi(
@@ -20,6 +20,10 @@ export async function checkSessionApi(
 
     const refreshToken = await refreshTokenCookie.parse(cookieHeader);
 
+    if (!refreshToken || !accessToken) {
+      return { data: null, error: 'No tokens provided.' };
+    }
+
     const res = await fetch(`${URL}/api/user/checkSession`, {
       method: 'POST',
       credentials: 'include',
@@ -30,8 +34,11 @@ export async function checkSessionApi(
     });
 
     if (!res.ok) {
-      const errorData: { error: string } = await res.json();
-      return { data: null, error: errorData.error };
+      const errorData: { error: string; details: string } = await res.json();
+      return {
+        data: null,
+        error: { error: errorData.error, details: errorData.details },
+      };
     }
 
     const data: { isAuthenticated: boolean; user: { id: string } } =
