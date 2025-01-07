@@ -1,5 +1,3 @@
-import { accessTokenCookie, refreshTokenCookie } from '~/cookies.server';
-
 const URL = import.meta.env.VITE_URL;
 
 interface CheckSessionApiReturn {
@@ -10,15 +8,17 @@ interface CheckSessionApiReturn {
   error: { error: string; details: string };
 }
 
+// TODO: Probably delete all of this.
+
 export async function checkSessionApi(
   request: Request
 ): Promise<CheckSessionApiReturn> {
   try {
     const cookieHeader = request.headers.get('Cookie');
 
-    const accessToken = await accessTokenCookie.parse(cookieHeader);
+    // const accessToken = await accessTokenCookie.parse(cookieHeader);
 
-    const refreshToken = await refreshTokenCookie.parse(cookieHeader);
+    // const refreshToken = await refreshTokenCookie.parse(cookieHeader);
 
     if (!refreshToken || !accessToken) {
       return { data: null, error: 'No tokens provided.' };

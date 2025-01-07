@@ -44,21 +44,23 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export async function loader({ request }: Route.LoaderArgs) {
-  const data = await checkSessionApi(request);
+// TODO: Clean this up.
 
-  return data;
-}
+// export async function loader({ request }: Route.LoaderArgs) {
+//   const data = await checkSessionApi(request);
+
+//   return data;
+// }
 
 export default function App({ loaderData }: Route.ComponentProps) {
-  const data = loaderData;
+  // const data = loaderData;
 
-  const { data: userData } = data;
+  // const { data: userData } = data;
 
   return (
-    <AuthProvider userId={userData?.user.id}>
-      <Outlet />
-    </AuthProvider>
+    // <AuthProvider userId={userData?.user.id}>
+    <Outlet />
+    /* </AuthProvider> */
   );
 }
 

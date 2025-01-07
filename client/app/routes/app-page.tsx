@@ -1,27 +1,25 @@
-import { data, redirect } from 'react-router';
-import { commitSession, getSession } from '~/sessions.server';
+import { sessionCookie } from '~/cookies.server';
 import type { Route } from './+types/app-page';
+import { redirect } from 'react-router';
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const session = await getSession(request.headers.get('Cookie'));
+  const cookieHeader = request.headers.get('Cookie');
+  const userId = await sessionCookie.parse(cookieHeader);
 
-  if (!session.has('userId')) {
+  if (!userId) {
     return redirect('/login');
   }
 
-  return {
-    userId: session.get('userId'),
-    headers: {
-      'Set-Cookie': await commitSession(session),
-    },
-  };
+  return { userId };
 }
 
 export default function AppPage({ loaderData }: Route.ComponentProps) {
+  const { userId } = loaderData;
+
   return (
     <div>
+      {userId}
       <div>This is the App page.</div>
-      {loaderData.userId}
     </div>
   );
 }

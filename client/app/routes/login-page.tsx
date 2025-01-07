@@ -1,12 +1,13 @@
 import { Form, redirect } from 'react-router';
 import { login } from '~/services/auth/login';
 import type { Route } from './+types/login-page';
-import { accessTokenCookie, refreshTokenCookie } from '~/cookies.server';
 
 // TODO: Read this - https://reactrouter.com/explanation/sessions-and-cookies
 // TODO: Set cookies.
 // TODO: Redirect user.
 // TODO: Form validation/error handling.
+
+// TODO: Redo literally all of this.
 
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
@@ -22,14 +23,14 @@ export async function action({ request }: Route.ActionArgs) {
   if (data.user) {
     return redirect('/app', {
       headers: [
-        [
-          'Set-Cookie',
-          await accessTokenCookie.serialize(data.user.accessToken),
-        ],
-        [
-          'Set-Cookie',
-          await refreshTokenCookie.serialize(data.user.refreshToken),
-        ],
+        // [
+        //   'Set-Cookie',
+        //   await accessTokenCookie.serialize(data.user.accessToken),
+        // ],
+        // [
+        //   'Set-Cookie',
+        //   await refreshTokenCookie.serialize(data.user.refreshToken),
+        // ],
       ],
     });
   }
