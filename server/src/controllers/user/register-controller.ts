@@ -4,8 +4,7 @@ import 'dotenv/config';
 import { NextFunction, Request, Response } from 'express';
 import { z } from 'zod';
 import { db } from '../../db/db';
-import { signRefreshToken } from '../../utils/sign-refresh-token';
-import { signAccessToken } from '../../utils/sign-access-token';
+import { signToken } from '../../utils/sign-token';
 
 const RegisterSchema = z.object({
   user: z.object({
@@ -35,32 +34,46 @@ export async function registerController(
       },
       select: {
         id: true,
-        email: false,
-        refreshTokenVersion: true,
+        email: true,
+        refreshTokenVersion: false,
         createdAt: true,
         updatedAt: false,
         password: false,
       },
     });
 
-    const refreshTokenPayload = {
-      id: user.id,
-      tokenVersion: user.refreshTokenVersion,
-    };
+    // const refreshTokenPayload = {
+    //   id: user.id,
+    //   tokenVersion: user.refreshTokenVersion,
+    // };
 
-    const refreshToken = signRefreshToken(refreshTokenPayload);
+    // const refreshToken = signRefreshToken(refreshTokenPayload);
 
-    const accessToken = signAccessToken({
+    // const accessToken = signAccessToken({
+    //   id: user.id,
+    //   createdAt: user.createdAt,
+    // });
+
+    // res.status(201).json({
+    //   message: 'successfully created user.',
+    //   user,
+    //   refreshToken,
+    //   accessToken,
+    // })
+
+    const jwtPayload = {
       id: user.id,
       createdAt: user.createdAt,
-    });
+      email: user.email,
+    };
+
+    const token = signToken(jwtPayload);
 
     res.status(201).json({
       message: 'successfully created user.',
-      user,
-      refreshToken,
-      accessToken,
+      userData: { user, token },
     });
+
     return;
   } catch (err) {
     if (err instanceof PrismaClientKnownRequestError) {
@@ -70,6 +83,7 @@ export async function registerController(
       }
     }
 
+    // TODO: Find a way to process ZodError so that it is not a mess on frontend.
     if (err instanceof z.ZodError) {
       res.status(409).json({ error: 'Invalid input', details: err.issues });
       return;

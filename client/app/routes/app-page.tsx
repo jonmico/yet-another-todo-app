@@ -1,29 +1,27 @@
-import { redirect } from 'react-router';
-import { useAuth } from '~/hooks/useAuth';
-import { checkSessionApi } from '~/services/auth/check-session-api';
+import { data, redirect } from 'react-router';
+import { commitSession, getSession } from '~/sessions.server';
 import type { Route } from './+types/app-page';
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const { data, error } = await checkSessionApi(request);
+  const session = await getSession(request.headers.get('Cookie'));
 
-  if (error) {
-    console.log(error.error);
+  if (!session.has('userId')) {
     return redirect('/login');
   }
 
-  return data;
+  return {
+    userId: session.get('userId'),
+    headers: {
+      'Set-Cookie': await commitSession(session),
+    },
+  };
 }
 
 export default function AppPage({ loaderData }: Route.ComponentProps) {
-  console.log(loaderData);
-  const { user } = useAuth();
-
-  if (!user) return null;
-
   return (
     <div>
       <div>This is the App page.</div>
-      <div>{user}</div>
+      {loaderData.userId}
     </div>
   );
 }

@@ -1,20 +1,7 @@
 import { Form, redirect } from 'react-router';
+import { registerUser } from '~/services/auth/register-user';
 import type { Route } from './+types/register-page';
-import { accessTokenCookie, refreshTokenCookie } from '~/cookies.server';
-
-const URL = import.meta.env.VITE_URL;
-
-interface DataType {
-  error?: string;
-  message?: string;
-  user?: {
-    id: string;
-    createdAt: Date;
-    refreshTokenVersion: number;
-  };
-  accessToken: string;
-  refreshToken: string;
-}
+import { commitSession, getSession } from '~/sessions.server';
 
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
@@ -22,35 +9,36 @@ export async function action({ request }: Route.ActionArgs) {
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
 
-  // TODO: Pull this fetch code out into a separate function
-  try {
-    const res = await fetch(`${URL}/api/user/register`, {
-      method: 'POST',
-      credentials: 'include',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ user: { email, password } }),
-    });
+  const { userData, error } = await registerUser(email, password);
 
-    const data: DataType = await res.json();
+  if (error) {
+    return error;
+  }
+
+  const session = await getSession(request.headers.get('Cookie'));
+
+  if (userData) {
+    console.log(userData);
+    session.set('userId', userData.id);
+    session.set('token', userData.token);
 
     return redirect('/app', {
-      headers: [
-        ['Set-Cookie', await refreshTokenCookie.serialize(data.refreshToken)],
-        ['Set-Cookie', await accessTokenCookie.serialize(data.accessToken)],
-      ],
+      headers: {
+        'Set-Cookie': await commitSession(session),
+      },
     });
-  } catch (err) {
-    console.error(err);
   }
 }
 
-export default function Register() {
+export default function Register({ actionData }: Route.ComponentProps) {
   return (
     <>
       <Form method='post'>
+        {actionData && (
+          <div>
+            <p>Error: {actionData.errorMessage}</p>
+          </div>
+        )}
         <div>
           <label htmlFor='email'>Email</label>
           <input type='email' name='email' id='email' />
