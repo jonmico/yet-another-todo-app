@@ -1,17 +1,36 @@
 import { Link, Outlet } from 'react-router';
-import { useAuth } from './hooks/useAuth';
+import type { Route } from './+types/app-layout';
+import { getSession } from './sessions.server';
 
-export default function AppLayout() {
+export async function loader({ request }: Route.LoaderArgs) {
+  const session = await getSession(request.headers.get('Cookie'));
+
+  const userId = session.get('userId');
+
+  // TODO: Look at this typing because what the hell
+  return { userId: userId ? userId : undefined };
+}
+
+export default function AppLayout({ loaderData }: Route.ComponentProps) {
+  const { userId } = loaderData;
+
   return (
     <div className='grid m-auto'>
-      <Header />
+      <Header userId={userId} />
       <Outlet />
     </div>
   );
 }
 
-function Header() {
-  const { user } = useAuth();
+interface HeaderProps {
+  userId: string | undefined;
+}
+
+// TODO: Style this component because the header is running off the screen. Maybe we need to style the actual container?
+function Header({ userId }: HeaderProps) {
+  console.log(userId);
+  const isLoggedIn = !!userId;
+  console.log(isLoggedIn);
 
   return (
     <div className='p-4 flex justify-between items-center'>
@@ -23,7 +42,7 @@ function Header() {
       </div>
       <nav>
         <ul className='flex gap-5'>
-          {!user ? (
+          {!isLoggedIn ? (
             <>
               <li>
                 <Link to={'login'}>Login</Link>

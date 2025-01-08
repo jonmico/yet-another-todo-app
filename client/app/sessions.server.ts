@@ -12,11 +12,10 @@ type SessionFlashData = {
 export const { getSession, commitSession, destroySession } =
   createCookieSessionStorage<SessionData, SessionFlashData>({
     cookie: {
-      name: '__session',
+      name: 'session',
       maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: true,
       path: '/',
       sameSite: 'lax',
-      // secrets: ['bad secret'],
     },
   });

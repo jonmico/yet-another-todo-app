@@ -1,6 +1,6 @@
 import { Form, redirect } from 'react-router';
-import { sessionCookie, tokenCookie } from '~/cookies.server';
 import { registerUser } from '~/services/auth/register-user';
+import { commitSession, getSession } from '~/sessions.server';
 import type { Route } from './+types/register-page';
 
 // TODO: Figure out error on errorMessage.
@@ -17,12 +17,25 @@ export async function action({ request }: Route.ActionArgs) {
     return { errorMessage: error.errorMessage };
   }
 
+  // if (userData) {
+  //   return redirect('/app', {
+  //     headers: [
+  //       ['Set-Cookie', await sessionCookie.serialize(userData.id)],
+  //       ['Set-Cookie', await tokenCookie.serialize(userData.token)],
+  //     ],
+  //   });
+  // }
+
   if (userData) {
+    const session = await getSession(request.headers.get('Cookie'));
+
+    session.set('userId', userData.id);
+    session.set('token', userData.token);
+
     return redirect('/app', {
-      headers: [
-        ['Set-Cookie', await sessionCookie.serialize(userData.id)],
-        ['Set-Cookie', await tokenCookie.serialize(userData.token)],
-      ],
+      headers: {
+        'Set-Cookie': await commitSession(session),
+      },
     });
   }
 }

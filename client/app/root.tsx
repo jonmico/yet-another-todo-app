@@ -44,24 +44,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-// TODO: Clean this up.
-
-// export async function loader({ request }: Route.LoaderArgs) {
-//   const data = await checkSessionApi(request);
-
-//   return data;
-// }
-
-export default function App({ loaderData }: Route.ComponentProps) {
-  // const data = loaderData;
-
-  // const { data: userData } = data;
-
-  return (
-    // <AuthProvider userId={userData?.user.id}>
-    <Outlet />
-    /* </AuthProvider> */
-  );
+export default function App() {
+  return <Outlet />;
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
