@@ -15,7 +15,6 @@ export async function loader({ request }: Route.LoaderArgs) {
   const session = await getSession(request.headers.get('Cookie'));
 
   const userId = session.get('userId');
-  const token = session.get('token');
 
   if (userId === undefined) {
     return redirect('/login', {
@@ -25,16 +24,15 @@ export async function loader({ request }: Route.LoaderArgs) {
     });
   }
 
-  return { userId, token };
+  return { userId };
 }
 
 export default function AppPage({ loaderData }: Route.ComponentProps) {
-  const { userId, token } = loaderData;
+  const { userId } = loaderData;
 
   return (
     <div>
       <p>{userId}</p>
-      <p>{token}</p>
       <div>This is the App page.</div>
     </div>
   );
