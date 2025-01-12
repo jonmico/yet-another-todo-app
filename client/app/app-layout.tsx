@@ -1,9 +1,9 @@
 import { Form, Link, Outlet } from 'react-router';
 import type { Route } from './+types/app-layout';
-import { getSession } from './sessions.server';
+import { sessionCookie } from './sessions.server';
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const session = await getSession(request.headers.get('Cookie'));
+  const session = await sessionCookie.getSession(request.headers.get('Cookie'));
 
   const userId = session.get('userId');
 

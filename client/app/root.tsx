@@ -10,7 +10,7 @@ import {
 
 import type { Route } from './+types/root';
 import stylesheet from './app.css?url';
-import { destroySession, getSession } from './sessions.server';
+import { sessionCookie, tokenCookie } from './sessions.server';
 
 export const links: Route.LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -45,12 +45,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export async function action({ request }: Route.ActionArgs) {
-  const session = await getSession(request.headers.get('Cookie'));
+  const session = await sessionCookie.getSession(request.headers.get('Cookie'));
+  const token = await tokenCookie.getSession(request.headers.get('Cookie'));
 
   return redirect('/login', {
-    headers: {
-      'Set-Cookie': await destroySession(session),
-    },
+    headers: [
+      ['Set-Cookie', await sessionCookie.destroySession(session)],
+      ['Set-Cookie', await tokenCookie.destroySession(token)],
+    ],
   });
 }
 

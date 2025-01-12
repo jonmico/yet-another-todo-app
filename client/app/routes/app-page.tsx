@@ -1,5 +1,5 @@
 import { redirect } from 'react-router';
-import { destroySession, getSession } from '~/sessions.server';
+import { sessionCookie } from '~/sessions.server';
 import type { Route } from './+types/app-page';
 
 /*
@@ -10,14 +10,14 @@ be something to work on tonight/tomorrow/Friday/whenever I can code again.
 */
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const session = await getSession(request.headers.get('Cookie'));
+  const session = await sessionCookie.getSession(request.headers.get('Cookie'));
 
   const userId = session.get('userId');
 
   if (userId === undefined) {
     return redirect('/login', {
       headers: {
-        'Set-Cookie': await destroySession(session),
+        'Set-Cookie': await sessionCookie.destroySession(session),
       },
     });
   }
