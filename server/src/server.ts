@@ -22,10 +22,9 @@ const corsOptions: CorsOptions = {
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization', 'Set-Cookie'],
 };
-
+app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(express.json());
-app.use(cookieParser());
 
 app.use('/api/user', userRouter);
 
