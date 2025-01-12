@@ -2,10 +2,29 @@ import { Form, redirect } from 'react-router';
 import { registerUser } from '~/services/auth/register-user';
 import type { Route } from './+types/register-page';
 import { sessionCookie, tokenCookie } from '~/sessions.server';
+import { data } from 'react-router';
 
-// TODO: Figure out error on errorMessage.
+export async function loader({ request }: Route.LoaderArgs) {
+  const session = await sessionCookie.getSession(request.headers.get('Cookie'));
+
+  if (session.has('userId')) {
+    throw redirect('/app');
+  }
+
+  return data(
+    { error: session.get('error') },
+    {
+      headers: {
+        'Set-Cookie': await sessionCookie.commitSession(session),
+      },
+    }
+  );
+}
 
 export async function action({ request }: Route.ActionArgs) {
+  const session = await sessionCookie.getSession(request.headers.get('Cookie'));
+  const token = await tokenCookie.getSession(request.headers.get('Cookie'));
+
   const formData = await request.formData();
 
   const email = formData.get('email') as string;
@@ -14,18 +33,22 @@ export async function action({ request }: Route.ActionArgs) {
   const { userData, error } = await registerUser(email, password);
 
   if (error) {
-    return { errorMessage: error.errorMessage };
+    session.flash('error', error.errorMessage);
+    token.flash('error', error.errorMessage);
+
+    throw redirect('/register', {
+      headers: [
+        ['Set-Cookie', await sessionCookie.commitSession(session)],
+        ['Set-Cookie', await tokenCookie.commitSession(token)],
+      ],
+    });
   }
 
   if (userData) {
-    const session = await sessionCookie.getSession(
-      request.headers.get('Cookie')
-    );
-    const token = await tokenCookie.getSession(request.headers.get('Cookie'));
-
     session.set('userId', userData.id);
+    token.set('token', userData.token);
 
-    return redirect('/app', {
+    throw redirect('/app', {
       headers: [
         ['Set-Cookie', await sessionCookie.commitSession(session)],
         ['Set-Cookie', await tokenCookie.commitSession(token)],
@@ -34,13 +57,14 @@ export async function action({ request }: Route.ActionArgs) {
   }
 }
 
-export default function Register({ actionData }: Route.ComponentProps) {
+export default function Register({ loaderData }: Route.ComponentProps) {
+  const { error } = loaderData;
   return (
     <>
       <Form method='post'>
-        {actionData && (
+        {error && (
           <div>
-            <p>Error: {actionData.errorMessage}</p>
+            <p>Error: {error}</p>
           </div>
         )}
         <div>
