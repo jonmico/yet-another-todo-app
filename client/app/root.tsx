@@ -3,14 +3,14 @@ import {
   Links,
   Meta,
   Outlet,
+  redirect,
   Scripts,
   ScrollRestoration,
 } from 'react-router';
 
 import type { Route } from './+types/root';
 import stylesheet from './app.css?url';
-import { AuthProvider } from './contexts/auth-context';
-import { checkSessionApi } from './services/auth/check-session-api';
+import { destroySession, getSession } from './sessions.server';
 
 export const links: Route.LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -42,6 +42,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </body>
     </html>
   );
+}
+
+export async function action({ request }: Route.ActionArgs) {
+  const session = await getSession(request.headers.get('Cookie'));
+
+  return redirect('/login', {
+    headers: {
+      'Set-Cookie': await destroySession(session),
+    },
+  });
 }
 
 export default function App() {

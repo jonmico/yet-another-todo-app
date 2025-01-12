@@ -1,4 +1,4 @@
-import { Link, Outlet } from 'react-router';
+import { Form, Link, Outlet } from 'react-router';
 import type { Route } from './+types/app-layout';
 import { getSession } from './sessions.server';
 
@@ -28,9 +28,7 @@ interface HeaderProps {
 
 // TODO: Style this component because the header is running off the screen. Maybe we need to style the actual container?
 function Header({ userId }: HeaderProps) {
-  console.log(userId);
   const isLoggedIn = !!userId;
-  console.log(isLoggedIn);
 
   return (
     <div className='p-4 flex justify-between items-center'>
@@ -52,7 +50,11 @@ function Header({ userId }: HeaderProps) {
               </li>
             </>
           ) : (
-            <li>Logout</li>
+            <li>
+              <Form method='post'>
+                <button>Logout</button>
+              </Form>
+            </li>
           )}
         </ul>
       </nav>
