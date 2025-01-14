@@ -44,6 +44,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+// This is an action for my app-layout page.
 export async function action({ request }: Route.ActionArgs) {
   const session = await sessionCookie.getSession(request.headers.get('Cookie'));
   const token = await tokenCookie.getSession(request.headers.get('Cookie'));

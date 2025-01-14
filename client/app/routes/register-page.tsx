@@ -21,6 +21,8 @@ export async function loader({ request }: Route.LoaderArgs) {
   );
 }
 
+// TODO: Make better validation for frontend.
+
 export async function action({ request }: Route.ActionArgs) {
   const session = await sessionCookie.getSession(request.headers.get('Cookie'));
   const token = await tokenCookie.getSession(request.headers.get('Cookie'));
@@ -56,6 +58,8 @@ export async function action({ request }: Route.ActionArgs) {
     });
   }
 }
+
+// TODO: Style this page. Start a ui folder and start making some basic UI components; input, form, button, etc.
 
 export default function Register({ loaderData }: Route.ComponentProps) {
   const { error } = loaderData;

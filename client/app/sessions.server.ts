@@ -1,5 +1,7 @@
 import { createCookieSessionStorage } from 'react-router';
 
+// Maybe make a .server directory and make separate files for each of these cookies.
+
 type SessionData = {
   userId: string;
 };
