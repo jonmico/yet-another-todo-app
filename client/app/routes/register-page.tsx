@@ -1,14 +1,13 @@
-import { Form, redirect } from 'react-router';
-import { registerUser } from '~/services/auth/register-user';
+import { data, Form, redirect } from 'react-router';
+import { createUser } from '~/.server/auth';
+import { sessionCookie } from '~/sessions.server';
 import type { Route } from './+types/register-page';
-import { sessionCookie, tokenCookie } from '~/sessions.server';
-import { data } from 'react-router';
 
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await sessionCookie.getSession(request.headers.get('Cookie'));
 
   if (session.has('userId')) {
-    throw redirect('/app');
+    return redirect('/app');
   }
 
   return data(
@@ -23,38 +22,21 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 export async function action({ request }: Route.ActionArgs) {
   const session = await sessionCookie.getSession(request.headers.get('Cookie'));
-  const token = await tokenCookie.getSession(request.headers.get('Cookie'));
 
   const formData = await request.formData();
 
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
 
-  const { userData, error } = await registerUser(email, password);
+  const user = await createUser(email, password);
 
-  if (error) {
-    session.flash('error', error.errorMessage);
-    token.flash('error', error.errorMessage);
+  session.set('userId', user.id);
 
-    throw redirect('/register', {
-      headers: [
-        ['Set-Cookie', await sessionCookie.commitSession(session)],
-        ['Set-Cookie', await tokenCookie.commitSession(token)],
-      ],
-    });
-  }
-
-  if (userData) {
-    session.set('userId', userData.id);
-    token.set('token', userData.token);
-
-    throw redirect('/app', {
-      headers: [
-        ['Set-Cookie', await sessionCookie.commitSession(session)],
-        ['Set-Cookie', await tokenCookie.commitSession(token)],
-      ],
-    });
-  }
+  return redirect('/app', {
+    headers: {
+      'Set-Cookie': await sessionCookie.commitSession(session),
+    },
+  });
 }
 
 export default function Register({ loaderData }: Route.ComponentProps) {

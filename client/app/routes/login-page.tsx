@@ -1,6 +1,7 @@
 import { Form, redirect } from 'react-router';
-import { login } from '~/services/auth/login';
 import type { Route } from './+types/login-page';
+import { login } from '~/.server/auth';
+import { sessionCookie } from '~/sessions.server';
 
 // TODO: Read this - https://reactrouter.com/explanation/sessions-and-cookies
 // TODO: Set cookies.
@@ -9,7 +10,17 @@ import type { Route } from './+types/login-page';
 
 // TODO: Redo literally all of this.
 
+export async function loader({ request }: Route.LoaderArgs) {
+  const session = await sessionCookie.getSession(request.headers.get('Cookie'));
+
+  if (session.has('userId')) {
+    return redirect('/app');
+  }
+}
+
 export async function action({ request }: Route.ActionArgs) {
+  const session = await sessionCookie.getSession(request.headers.get('Cookie'));
+
   const formData = await request.formData();
   const email = String(formData.get('email'));
   const password = String(formData.get('password'));
@@ -21,24 +32,16 @@ export async function action({ request }: Route.ActionArgs) {
   }
 
   if (data.user) {
+    session.set('userId', data.user.id);
     return redirect('/app', {
-      headers: [
-        // [
-        //   'Set-Cookie',
-        //   await accessTokenCookie.serialize(data.user.accessToken),
-        // ],
-        // [
-        //   'Set-Cookie',
-        //   await refreshTokenCookie.serialize(data.user.refreshToken),
-        // ],
-      ],
+      headers: {
+        'Set-Cookie': await sessionCookie.commitSession(session),
+      },
     });
   }
-
-  return null;
 }
 
-export default function Login({ actionData }: Route.ComponentProps) {
+export default function Login() {
   return (
     <div className='w-full'>
       <div className='w-1/4 m-auto'>
