@@ -35,7 +35,6 @@ export async function registerController(
       select: {
         id: true,
         email: true,
-        refreshTokenVersion: false,
         createdAt: true,
         updatedAt: false,
         password: false,

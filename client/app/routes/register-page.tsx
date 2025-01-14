@@ -8,7 +8,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   const session = await sessionCookie.getSession(request.headers.get('Cookie'));
 
   if (session.has('userId')) {
-    throw redirect('/app');
+    return redirect('/app');
   }
 
   return data(
@@ -36,7 +36,7 @@ export async function action({ request }: Route.ActionArgs) {
     session.flash('error', error.errorMessage);
     token.flash('error', error.errorMessage);
 
-    throw redirect('/register', {
+    return redirect('/register', {
       headers: [
         ['Set-Cookie', await sessionCookie.commitSession(session)],
         ['Set-Cookie', await tokenCookie.commitSession(token)],
@@ -48,7 +48,7 @@ export async function action({ request }: Route.ActionArgs) {
     session.set('userId', userData.id);
     token.set('token', userData.token);
 
-    throw redirect('/app', {
+    return redirect('/app', {
       headers: [
         ['Set-Cookie', await sessionCookie.commitSession(session)],
         ['Set-Cookie', await tokenCookie.commitSession(token)],

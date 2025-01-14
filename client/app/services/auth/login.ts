@@ -4,10 +4,10 @@ const URL = import.meta.env.VITE_URL;
 // TODO: Maybe switch to a generic fetch helper.
 
 interface LoginData {
+  message?: string;
   user?: {
     userId: string;
-    accessToken: string;
-    refreshToken: string;
+    token: string;
   };
   error?: {
     message: string;
@@ -26,8 +26,6 @@ export async function login(email: string, password: string) {
     });
 
     const data: LoginData = await res.json();
-
-    console.log(data);
 
     return data;
   } catch (err) {

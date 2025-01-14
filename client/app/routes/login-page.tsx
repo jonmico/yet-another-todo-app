@@ -1,15 +1,24 @@
 import { Form, redirect } from 'react-router';
 import { login } from '~/services/auth/login';
 import type { Route } from './+types/login-page';
+import { sessionCookie, tokenCookie } from '~/sessions.server';
 
-// TODO: Read this - https://reactrouter.com/explanation/sessions-and-cookies
-// TODO: Set cookies.
-// TODO: Redirect user.
-// TODO: Form validation/error handling.
+export async function loader({ request }: Route.LoaderArgs) {
+  const session = await sessionCookie.getSession(request.headers.get('Cookie'));
 
-// TODO: Redo literally all of this.
+  if (session.has('userId')) {
+    return redirect('/app');
+  }
+}
 
 export async function action({ request }: Route.ActionArgs) {
+  const session = await sessionCookie.getSession(request.headers.get('Cookie'));
+  const token = await tokenCookie.getSession(request.headers.get('Cookie'));
+
+  if (session.has('userId')) {
+    return redirect('/app');
+  }
+
   const formData = await request.formData();
   const email = String(formData.get('email'));
   const password = String(formData.get('password'));
@@ -21,16 +30,13 @@ export async function action({ request }: Route.ActionArgs) {
   }
 
   if (data.user) {
+    session.set('userId', data.user.userId);
+    token.set('token', data.user.token);
+
     return redirect('/app', {
       headers: [
-        // [
-        //   'Set-Cookie',
-        //   await accessTokenCookie.serialize(data.user.accessToken),
-        // ],
-        // [
-        //   'Set-Cookie',
-        //   await refreshTokenCookie.serialize(data.user.refreshToken),
-        // ],
+        ['Set-Cookie', await tokenCookie.commitSession(token)],
+        ['Set-Cookie', await sessionCookie.commitSession(session)],
       ],
     });
   }

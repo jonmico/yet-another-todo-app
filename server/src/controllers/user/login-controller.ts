@@ -4,6 +4,7 @@ import z from 'zod';
 import { db } from '../../db/db';
 import { signAccessToken } from '../../utils/sign-access-token';
 import { signRefreshToken } from '../../utils/sign-refresh-token';
+import { signToken } from '../../utils/sign-token';
 
 const LoginSchema = z.object({
   email: z.string(),
@@ -38,19 +39,15 @@ export async function loginController(
       res.status(403).json({ error: 'Invalid email or password.' });
       return;
     }
-    // issue access/refresh tokens
 
-    const accessToken = signAccessToken({
+    const token = signToken({
       id: user.id,
       createdAt: user.createdAt,
+      email: user.email,
     });
 
-    const refreshToken = signRefreshToken({
-      id: user.id,
-      tokenVersion: user.refreshTokenVersion,
-    });
     // send response back saying user is logged in
-    res.json({ user: { userId: user.id, accessToken, refreshToken } });
+    res.json({ message: 'logged in.', user: { userId: user.id, token } });
     return;
   } catch (err) {
     next(err);
