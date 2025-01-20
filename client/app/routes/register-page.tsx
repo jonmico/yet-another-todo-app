@@ -3,6 +3,8 @@ import { registerUser } from '~/services/auth/register-user';
 import type { Route } from './+types/register-page';
 import { sessionCookie, tokenCookie } from '~/sessions.server';
 import { data } from 'react-router';
+import FormInput from '~/ui/form-input';
+import Button from '~/ui/button';
 
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await sessionCookie.getSession(request.headers.get('Cookie'));
@@ -58,29 +60,40 @@ export async function action({ request }: Route.ActionArgs) {
     });
   }
 }
-
-// TODO: Style this page. Start a ui folder and start making some basic UI components; input, form, button, etc.
+// TODO: Make responsive. Add error handling.
 
 export default function Register({ loaderData }: Route.ComponentProps) {
   const { error } = loaderData;
   return (
-    <>
-      <Form method='post'>
+    <div className='flex flex-col pt-8 gap-4'>
+      <h2 className=' text-center font-bold text-xl'>
+        Sign up for Yet Another Todo App
+      </h2>
+      <Form
+        method='post'
+        className='border border-blue-600 rounded bg-slate-900 w-1/3 m-auto flex flex-col gap-4 p-4'
+      >
         {error && (
           <div>
             <p>Error: {error}</p>
           </div>
         )}
-        <div>
-          <label htmlFor='email'>Email</label>
-          <input type='email' name='email' id='email' />
-        </div>
-        <div>
-          <label htmlFor='password'>Password</label>
-          <input type='password' name='password' id='password' />
-        </div>
-        <button type='submit'>Submit</button>
+        <FormInput
+          htmlFor='email'
+          label='Email'
+          name='email'
+          id='email'
+          type='email'
+        />
+        <FormInput
+          htmlFor='password'
+          label='Password'
+          name='password'
+          id='password'
+          type='password'
+        />
+        <Button type='submit'>Submit</Button>
       </Form>
-    </>
+    </div>
   );
 }
