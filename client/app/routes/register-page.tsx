@@ -1,10 +1,12 @@
-import { Form, redirect } from 'react-router';
+import { redirect } from 'react-router';
 import { registerUser } from '~/services/auth/register-user';
 import type { Route } from './+types/register-page';
 import { sessionCookie, tokenCookie } from '~/sessions.server';
 import { data } from 'react-router';
 import FormInput from '~/ui/form-input';
 import Button from '~/ui/button';
+import Form from '~/ui/form';
+import FormError from '~/ui/form-error';
 
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await sessionCookie.getSession(request.headers.get('Cookie'));
@@ -69,15 +71,8 @@ export default function Register({ loaderData }: Route.ComponentProps) {
       <h2 className=' text-center font-bold text-xl'>
         Sign up for Yet Another Todo App
       </h2>
-      <Form
-        method='post'
-        className='border border-blue-600 rounded bg-slate-900 w-1/3 m-auto flex flex-col gap-4 p-4'
-      >
-        {error && (
-          <div>
-            <p>Error: {error}</p>
-          </div>
-        )}
+      <Form method='post'>
+        <FormError message='This is a test error.' />
         <FormInput
           htmlFor='email'
           label='Email'

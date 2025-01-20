@@ -1,8 +1,13 @@
-import { Form, redirect } from 'react-router';
+import { redirect } from 'react-router';
 import { login } from '~/services/auth/login';
 import type { Route } from './+types/login-page';
 import { sessionCookie, tokenCookie } from '~/sessions.server';
 import Button from '~/ui/button';
+import Form from '~/ui/form';
+import FormInput from '~/ui/form-input';
+import FormError from '~/ui/form-error';
+
+// TODO: Frontend validation.
 
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await sessionCookie.getSession(request.headers.get('Cookie'));
@@ -45,34 +50,30 @@ export async function action({ request }: Route.ActionArgs) {
   return null;
 }
 
-// TODO: Make this look halfway decent. Kinda like register page.
-// Maybe just break register component out and reuse here?
-
 export default function Login() {
   return (
-    <div className='w-full'>
-      <div className='w-1/4 m-auto'>
-        <h2 className='text-center'>Log in to Yet Another Todo App</h2>
-        <Form
-          method='post'
-          className='p-4 border border-slate-900 rounded flex flex-col gap-2'
-        >
-          <div className='flex flex-col'>
-            <label htmlFor='email'>Email</label>
-            <input className='rounded' name='email' type='email' id='email' />
-          </div>
-          <div className='flex flex-col'>
-            <label htmlFor='password'>Password</label>
-            <input
-              className='rounded'
-              name='password'
-              type='password'
-              id='password'
-            />
-          </div>
-          <Button type='submit'>Submit</Button>
-        </Form>
-      </div>
+    <div className='flex flex-col pt-8 gap-4'>
+      <h2 className=' text-center font-bold text-xl'>
+        Log in to Yet Another Todo App
+      </h2>
+      <Form method='post'>
+        <FormError message='This is a test error.' />
+        <FormInput
+          label='Email'
+          type='email'
+          id='email'
+          htmlFor='email'
+          name='email'
+        />
+        <FormInput
+          label='Password'
+          type='password'
+          id='password'
+          htmlFor='password'
+          name='password'
+        />
+        <Button type='submit'>Submit</Button>
+      </Form>
     </div>
   );
 }
