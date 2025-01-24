@@ -27,6 +27,11 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 // TODO: Make better validation for frontend.
 
+interface FormErrors {
+  emailError: string;
+  passwordError: string;
+}
+
 export async function action({ request }: Route.ActionArgs) {
   const session = await sessionCookie.getSession(request.headers.get('Cookie'));
   const token = await tokenCookie.getSession(request.headers.get('Cookie'));
@@ -35,6 +40,24 @@ export async function action({ request }: Route.ActionArgs) {
 
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
+
+  const formErrors: FormErrors = { emailError: '', passwordError: '' };
+
+  if (!email) {
+    formErrors.emailError = 'Required field.'
+  }
+
+  if (!password) {
+    formErrors.passwordError = 'Required field.'
+  }
+
+  console.log(formErrors)
+
+  
+
+  if (Object.keys(formErrors)) {
+    return formErrors;
+  }
 
   const { userData, error } = await registerUser(email, password);
 
@@ -66,6 +89,7 @@ export async function action({ request }: Route.ActionArgs) {
 
 export default function Register({ loaderData }: Route.ComponentProps) {
   const { error } = loaderData;
+
   return (
     <div className='flex flex-col pt-8 gap-4'>
       <h2 className=' text-center font-bold text-xl'>
@@ -74,6 +98,7 @@ export default function Register({ loaderData }: Route.ComponentProps) {
       <Form method='post'>
         <FormError message='This is a test error.' />
         <FormInput
+          // required={true}
           htmlFor='email'
           label='Email'
           name='email'
@@ -81,6 +106,7 @@ export default function Register({ loaderData }: Route.ComponentProps) {
           type='email'
         />
         <FormInput
+          // required={true}
           htmlFor='password'
           label='Password'
           name='password'
