@@ -19,11 +19,19 @@ export async function registerController(
   next: NextFunction
 ) {
   try {
-    const validatedData = RegisterSchema.parse(req.body);
+    const result = RegisterSchema.safeParse(req.body);
+    console.log(result.error);
+
+    if (!result.success) {
+      res.status(400).json({ errors: result.error.flatten().fieldErrors });
+      return;
+    }
 
     const {
-      user: { email, password },
-    } = validatedData;
+      data: {
+        user: { password, email },
+      },
+    } = result;
 
     const hash = await bcrypt.hash(password, 10);
 

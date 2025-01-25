@@ -20,14 +20,13 @@ type RegisterReturn = {
     token: string;
   };
   error?: {
-    errorMessage: string;
-    details?: string[];
+    errorMessage: string[];
   };
 };
 
 export async function registerUser(
   email: string,
-  password: string
+  password: string,
 ): Promise<RegisterReturn> {
   try {
     const res = await fetch(`${URL}/api/user/register`, {
@@ -40,11 +39,11 @@ export async function registerUser(
     });
 
     if (!res.ok) {
-      const errorData: { error: string; details?: string[] } = await res.json();
+      const errorData: { errors: { user: string[] } } = await res.json();
+
       return {
         error: {
-          errorMessage: errorData.error,
-          details: errorData.details ? errorData.details : undefined,
+          errorMessage: errorData.errors.user,
         },
       };
     }
@@ -61,9 +60,9 @@ export async function registerUser(
     };
   } catch (err) {
     if (err instanceof Error) {
-      return { error: { errorMessage: err.message } };
+      return { error: { errorMessage: [err.message] } };
     } else {
-      return { error: { errorMessage: 'Something went wrong!' } };
+      return { error: { errorMessage: ['Something went wrong!'] } };
     }
   }
 }

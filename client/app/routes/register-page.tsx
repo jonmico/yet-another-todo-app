@@ -1,12 +1,11 @@
 import { redirect } from 'react-router';
 import { registerUser } from '~/services/auth/register-user';
-import type { Route } from './+types/register-page';
 import { sessionCookie, tokenCookie } from '~/sessions.server';
-import { data } from 'react-router';
-import FormInput from '~/ui/form-input';
 import Button from '~/ui/button';
 import Form from '~/ui/form';
 import FormError from '~/ui/form-error';
+import FormInput from '~/ui/form-input';
+import type { Route } from './+types/register-page';
 
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await sessionCookie.getSession(request.headers.get('Cookie'));
@@ -14,23 +13,9 @@ export async function loader({ request }: Route.LoaderArgs) {
   if (session.has('userId')) {
     return redirect('/app');
   }
-
-  return data(
-    { error: session.get('error') },
-    {
-      headers: {
-        'Set-Cookie': await sessionCookie.commitSession(session),
-      },
-    }
-  );
 }
 
 // TODO: Make better validation for frontend.
-
-interface FormErrors {
-  emailError: string;
-  passwordError: string;
-}
 
 export async function action({ request }: Route.ActionArgs) {
   const session = await sessionCookie.getSession(request.headers.get('Cookie'));
@@ -41,36 +26,12 @@ export async function action({ request }: Route.ActionArgs) {
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
 
-  const formErrors: FormErrors = { emailError: '', passwordError: '' };
-
-  if (!email) {
-    formErrors.emailError = 'Required field.'
-  }
-
-  if (!password) {
-    formErrors.passwordError = 'Required field.'
-  }
-
-  console.log(formErrors)
-
-  
-
-  if (Object.keys(formErrors)) {
-    return formErrors;
-  }
-
   const { userData, error } = await registerUser(email, password);
 
   if (error) {
-    session.flash('error', error.errorMessage);
-    token.flash('error', error.errorMessage);
-
-    return redirect('/register', {
-      headers: [
-        ['Set-Cookie', await sessionCookie.commitSession(session)],
-        ['Set-Cookie', await tokenCookie.commitSession(token)],
-      ],
-    });
+    return {
+      formError: error.errorMessage,
+    };
   }
 
   if (userData) {
@@ -84,21 +45,22 @@ export async function action({ request }: Route.ActionArgs) {
       ],
     });
   }
+
+  return { formError: ['Registration failed.'] };
 }
 // TODO: Make responsive. Add error handling.
 
-export default function Register({ loaderData }: Route.ComponentProps) {
-  const { error } = loaderData;
-
+export default function Register({ actionData }: Route.ComponentProps) {
   return (
-    <div className='flex flex-col pt-8 gap-4'>
-      <h2 className=' text-center font-bold text-xl'>
+    <div className='flex flex-col gap-4 pt-8'>
+      <h2 className='text-center text-xl font-bold'>
         Sign up for Yet Another Todo App
       </h2>
       <Form method='post'>
-        <FormError message='This is a test error.' />
+        {actionData ? <FormError message={actionData.formError} /> : null}
+        {/* <FormError message='This is a test error.' /> */}
         <FormInput
-          // required={true}
+          required={true}
           htmlFor='email'
           label='Email'
           name='email'
@@ -106,7 +68,7 @@ export default function Register({ loaderData }: Route.ComponentProps) {
           type='email'
         />
         <FormInput
-          // required={true}
+          required={true}
           htmlFor='password'
           label='Password'
           name='password'
