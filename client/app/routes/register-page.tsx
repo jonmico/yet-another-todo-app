@@ -93,7 +93,8 @@ export async function action({ request }: Route.ActionArgs) {
 
   return { error: 'Registration failed.' };
 }
-// TODO: Make responsive. Add error handling.
+
+// TODO: Figure out typing
 
 export default function Register({ actionData }: Route.ComponentProps) {
   return (

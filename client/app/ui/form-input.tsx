@@ -11,6 +11,7 @@ interface FormInputProps {
 }
 
 export default function FormInput(props: FormInputProps) {
+  const isError = !!props.errorMessage;
   return (
     <div className='flex flex-col gap-1'>
       <div className='flex flex-col'>
@@ -21,7 +22,7 @@ export default function FormInput(props: FormInputProps) {
           {props.label}
         </label>
         <input
-          className='h-8 rounded bg-gray-950 px-2 focus:outline-none focus:ring focus:ring-blue-600'
+          className={`h-8 rounded bg-gray-950 px-2 focus:outline-none ${isError ? 'border border-rose-500' : 'focus:ring focus:ring-blue-600'}`}
           required={props.required}
           type={props.type}
           name={props.name}

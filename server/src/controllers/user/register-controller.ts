@@ -8,7 +8,10 @@ import { signToken } from '../../utils/sign-token';
 
 const RegisterSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(8).max(50),
+  password: z
+    .string()
+    .min(8, { message: 'Password must have at least 8 characters.' })
+    .max(50),
 });
 
 interface ErrorReturn {
