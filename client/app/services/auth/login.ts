@@ -8,29 +8,31 @@ type LoginSuccess = {
   user: {
     userId: string;
     token: string;
-  }
-}
+  };
+};
 
 type FormError = {
   error: {
     email?: string;
     password?: string;
-  }
-}
+  };
+};
 
 type ServerError = {
   error: {
     server: string;
-  }
-}
+  };
+};
 
-type LoginResult = 
-| {type: 'success', data: LoginSuccess}
-| {type: 'formError', data: FormError} 
-| {type: 'serverError', data: ServerError}
+type LoginResult =
+  | { type: 'success'; data: LoginSuccess }
+  | { type: 'formError'; data: FormError }
+  | { type: 'serverError'; data: ServerError };
 
-
-export async function login(email: string, password: string): Promise<LoginResult> {
+export async function login(
+  email: string,
+  password: string,
+): Promise<LoginResult> {
   try {
     const res = await fetch(`${URL}/api/user/login`, {
       method: 'POST',
@@ -47,25 +49,27 @@ export async function login(email: string, password: string): Promise<LoginResul
       if ('formError' in data) {
         return {
           type: 'formError',
-          data
-        }
+          data,
+        };
       }
-      
-      if ('serverError' in data){
-      return {
-        type: 'serverError',
-        data
-      }}
+
+      if ('serverError' in data) {
+        return {
+          type: 'serverError',
+          data,
+        };
+      }
     }
 
-    
     return data;
   } catch (err) {
     return {
       type: 'serverError',
       data: {
-        error: {server: err instanceof Error ? err.message : 'Something went wrong.'}
-      }
+        error: {
+          server: err instanceof Error ? err.message : 'Something went wrong.',
+        },
+      },
     };
   }
 }

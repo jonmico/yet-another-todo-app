@@ -33,7 +33,7 @@ export async function action({ request }: Route.ActionArgs) {
   console.log(result);
 
   if (result.type === 'success') {
-    const {data} = result
+    const { data } = result;
     session.set('userId', data.user.userId);
     token.set('token', data.user.token);
 
@@ -45,30 +45,30 @@ export async function action({ request }: Route.ActionArgs) {
     });
   }
 
-  if (result.type ==='formError') {
-    const {data} = result;
+  if (result.type === 'formError') {
+    const { data } = result;
     return {
       formError: {
         email: data.error.email,
-        password: data.error.password
-      }
-    }
+        password: data.error.password,
+      },
+    };
   }
 
   if (result.type === 'serverError') {
-    const {data} = result;
+    const { data } = result;
     return {
       serverError: {
         error: {
-          server: data
-        }
-      }
-    }
+          server: data,
+        },
+      },
+    };
   }
 }
 
 export default function Login({ actionData }: Route.ComponentProps) {
-  console.log(actionData)
+  console.log(actionData);
   return (
     <div className='flex flex-col gap-4 pt-8'>
       <h2 className='text-center text-xl font-bold'>
