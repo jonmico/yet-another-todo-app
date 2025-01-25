@@ -52,12 +52,12 @@ export async function action({ request }: Route.ActionArgs) {
 
 export default function Login() {
   return (
-    <div className='flex flex-col pt-8 gap-4'>
-      <h2 className=' text-center font-bold text-xl'>
+    <div className='flex flex-col gap-4 pt-8'>
+      <h2 className='text-center text-xl font-bold'>
         Log in to Yet Another Todo App
       </h2>
       <Form method='post'>
-        <FormError message='This is a test error.' />
+        {/* <FormError message='This is a test error.' /> */}
         <FormInput
           label='Email'
           type='email'

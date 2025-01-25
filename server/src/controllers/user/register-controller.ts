@@ -7,11 +7,14 @@ import { db } from '../../db/db';
 import { signToken } from '../../utils/sign-token';
 
 const RegisterSchema = z.object({
-  user: z.object({
-    email: z.string().email(),
-    password: z.string().min(8).max(50),
-  }),
+  email: z.string().email(),
+  password: z.string().min(8).max(50),
 });
+
+interface ErrorReturn {
+  email?: string;
+  password?: string;
+}
 
 export async function registerController(
   req: Request,
@@ -20,24 +23,29 @@ export async function registerController(
 ) {
   try {
     const result = RegisterSchema.safeParse(req.body);
-    console.log(result.error);
 
     if (!result.success) {
-      res.status(400).json({ errors: result.error.flatten().fieldErrors });
+      console.log('Error Log:', result.error);
+      const errorMessage = result.error.flatten().fieldErrors;
+
+      console.log('Error message:', errorMessage);
+
+      const error: ErrorReturn = {
+        email: errorMessage.email?.join(', '),
+        password: errorMessage.password?.join(', '),
+      };
+
+      res.status(400).json({ formError: error });
       return;
     }
 
-    const {
-      data: {
-        user: { password, email },
-      },
-    } = result;
+    const { data } = result;
 
-    const hash = await bcrypt.hash(password, 10);
+    const hash = await bcrypt.hash(data.password, 10);
 
     const user = await db.user.create({
       data: {
-        email,
+        email: data.email,
         password: hash,
       },
       select: {
@@ -48,25 +56,6 @@ export async function registerController(
         password: false,
       },
     });
-
-    // const refreshTokenPayload = {
-    //   id: user.id,
-    //   tokenVersion: user.refreshTokenVersion,
-    // };
-
-    // const refreshToken = signRefreshToken(refreshTokenPayload);
-
-    // const accessToken = signAccessToken({
-    //   id: user.id,
-    //   createdAt: user.createdAt,
-    // });
-
-    // res.status(201).json({
-    //   message: 'successfully created user.',
-    //   user,
-    //   refreshToken,
-    //   accessToken,
-    // })
 
     const jwtPayload = {
       id: user.id,
@@ -85,15 +74,9 @@ export async function registerController(
   } catch (err) {
     if (err instanceof PrismaClientKnownRequestError) {
       if (err.code === 'P2002') {
-        res.status(400).json({ error: 'Email is already in use.' });
+        res.status(400).json({ message: 'Email is already in use.' });
         return;
       }
-    }
-
-    // TODO: Find a way to process ZodError so that it is not a mess on frontend.
-    if (err instanceof z.ZodError) {
-      res.status(409).json({ error: 'Invalid input', details: err.issues });
-      return;
     }
 
     next(err);

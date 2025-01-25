@@ -3,9 +3,10 @@ import { registerUser } from '~/services/auth/register-user';
 import { sessionCookie, tokenCookie } from '~/sessions.server';
 import Button from '~/ui/button';
 import Form from '~/ui/form';
-import FormError from '~/ui/form-error';
 import FormInput from '~/ui/form-input';
 import type { Route } from './+types/register-page';
+import FormError from '~/ui/form-error';
+import ServerError from '~/ui/server-error';
 
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await sessionCookie.getSession(request.headers.get('Cookie'));
@@ -18,6 +19,14 @@ export async function loader({ request }: Route.LoaderArgs) {
 // TODO: Make better validation for frontend.
 
 export async function action({ request }: Route.ActionArgs) {
+  // : Promise<
+  //   | Response
+  //   | {
+  //       formError: { email?: string; password?: string };
+  //     }
+  //   | { serverError: string }
+  //   | { error: string }
+  // >
   const session = await sessionCookie.getSession(request.headers.get('Cookie'));
   const token = await tokenCookie.getSession(request.headers.get('Cookie'));
 
@@ -26,19 +35,42 @@ export async function action({ request }: Route.ActionArgs) {
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
 
-  const { userData, error } = await registerUser(email, password);
+  const result = await registerUser(email, password);
 
-  if (error) {
-    return {
-      formError: error.errorMessage,
-    };
-  }
+  // switch (result.type) {
+  //   case 'success':
+  //     session.set('userId', result.data.user.id);
+  //     token.set('token', result.data.token);
 
-  if (userData) {
-    session.set('userId', userData.id);
-    token.set('token', userData.token);
+  //     return redirect('/app', {
+  //       headers: [
+  //         ['Set-Cookie', await sessionCookie.commitSession(session)],
+  //         ['Set-Cookie', await tokenCookie.commitSession(token)],
+  //       ],
+  //     });
+  //   case 'formError':
+  //     const formError = {
+  //       email: result.data.formError.email,
+  //       password: result.data.formError.password,
+  //     };
 
-    return redirect('/app', {
+  //     return { formError };
+  //   case 'serverError':
+  //     return {
+  //       serverError: result.data.message,
+  //     };
+  //   default:
+  //     return {
+  //       error:
+  //         'This error is in register page action. I am not sure what to put here.',
+  //     };
+  // }
+
+  if (result.type === 'success') {
+    session.set('userId', result.data.user.id);
+    token.set('token', result.data.token);
+
+    throw redirect('/app', {
       headers: [
         ['Set-Cookie', await sessionCookie.commitSession(session)],
         ['Set-Cookie', await tokenCookie.commitSession(token)],
@@ -46,7 +78,20 @@ export async function action({ request }: Route.ActionArgs) {
     });
   }
 
-  return { formError: ['Registration failed.'] };
+  if (result.type === 'formError') {
+    const formError = {
+      email: result.data.formError.email,
+      password: result.data.formError.password,
+    };
+
+    return { formError };
+  }
+
+  if (result.type === 'serverError') {
+    return { serverError: result.data.message };
+  }
+
+  return { error: 'Registration failed.' };
 }
 // TODO: Make responsive. Add error handling.
 
@@ -57,8 +102,9 @@ export default function Register({ actionData }: Route.ComponentProps) {
         Sign up for Yet Another Todo App
       </h2>
       <Form method='post'>
-        {actionData ? <FormError message={actionData.formError} /> : null}
-        {/* <FormError message='This is a test error.' /> */}
+        {actionData?.serverError ? (
+          <ServerError message={actionData.serverError} />
+        ) : null}
         <FormInput
           required={true}
           htmlFor='email'
@@ -66,6 +112,7 @@ export default function Register({ actionData }: Route.ComponentProps) {
           name='email'
           id='email'
           type='email'
+          errorMessage={actionData?.formError?.email}
         />
         <FormInput
           required={true}
@@ -74,6 +121,7 @@ export default function Register({ actionData }: Route.ComponentProps) {
           name='password'
           id='password'
           type='password'
+          errorMessage={actionData?.formError?.password}
         />
         <Button type='submit'>Submit</Button>
       </Form>

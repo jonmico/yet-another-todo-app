@@ -1,33 +1,35 @@
 const URL = import.meta.env.VITE_URL;
 
-type RegisterData = {
+type RegisterSuccess = {
   message: string;
-  userData: {
-    user: {
-      email: string;
-      id: string;
-      createdAt: Date;
-    };
-    token: string;
-  };
-};
-
-type RegisterReturn = {
-  userData?: {
+  user: {
     email: string;
     id: string;
     createdAt: Date;
-    token: string;
   };
-  error?: {
-    errorMessage: string[];
+  token: string;
+};
+
+type RegisterResult =
+  | { type: 'success'; data: RegisterSuccess }
+  | { type: 'formError'; data: FormValidationError }
+  | { type: 'serverError'; data: ServerError };
+
+type FormValidationError = {
+  formError: {
+    email?: string;
+    password?: string;
   };
+};
+
+type ServerError = {
+  message: string;
 };
 
 export async function registerUser(
   email: string,
   password: string,
-): Promise<RegisterReturn> {
+): Promise<RegisterResult> {
   try {
     const res = await fetch(`${URL}/api/user/register`, {
       method: 'POST',
@@ -35,34 +37,37 @@ export async function registerUser(
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ user: { email, password } }),
+      body: JSON.stringify({ email, password }),
     });
 
     if (!res.ok) {
-      const errorData: { errors: { user: string[] } } = await res.json();
+      const data = await res.json();
+
+      if ('formError' in data) {
+        return {
+          type: 'formError',
+          data: { formError: data.formError },
+        };
+      }
 
       return {
-        error: {
-          errorMessage: errorData.errors.user,
-        },
+        type: 'serverError',
+        data: { message: data.message },
       };
     }
 
-    const { userData }: RegisterData = await res.json();
+    const data = await res.json();
 
     return {
-      userData: {
-        email: userData.user.email,
-        id: userData.user.id,
-        createdAt: userData.user.createdAt,
-        token: userData.token,
-      },
+      type: 'success',
+      data,
     };
   } catch (err) {
-    if (err instanceof Error) {
-      return { error: { errorMessage: [err.message] } };
-    } else {
-      return { error: { errorMessage: ['Something went wrong!'] } };
-    }
+    return {
+      type: 'serverError',
+      data: {
+        message: err instanceof Error ? err.message : 'Something went wrong.',
+      },
+    };
   }
 }
