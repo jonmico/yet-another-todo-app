@@ -70,7 +70,8 @@ export async function registerController(
 
     res.status(201).json({
       message: 'successfully created user.',
-      userData: { user, token },
+      user,
+      token,
     });
 
     return;

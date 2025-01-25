@@ -19,14 +19,6 @@ export async function loader({ request }: Route.LoaderArgs) {
 // TODO: Make better validation for frontend.
 
 export async function action({ request }: Route.ActionArgs) {
-  // : Promise<
-  //   | Response
-  //   | {
-  //       formError: { email?: string; password?: string };
-  //     }
-  //   | { serverError: string }
-  //   | { error: string }
-  // >
   const session = await sessionCookie.getSession(request.headers.get('Cookie'));
   const token = await tokenCookie.getSession(request.headers.get('Cookie'));
 
@@ -36,35 +28,6 @@ export async function action({ request }: Route.ActionArgs) {
   const password = formData.get('password') as string;
 
   const result = await registerUser(email, password);
-
-  // switch (result.type) {
-  //   case 'success':
-  //     session.set('userId', result.data.user.id);
-  //     token.set('token', result.data.token);
-
-  //     return redirect('/app', {
-  //       headers: [
-  //         ['Set-Cookie', await sessionCookie.commitSession(session)],
-  //         ['Set-Cookie', await tokenCookie.commitSession(token)],
-  //       ],
-  //     });
-  //   case 'formError':
-  //     const formError = {
-  //       email: result.data.formError.email,
-  //       password: result.data.formError.password,
-  //     };
-
-  //     return { formError };
-  //   case 'serverError':
-  //     return {
-  //       serverError: result.data.message,
-  //     };
-  //   default:
-  //     return {
-  //       error:
-  //         'This error is in register page action. I am not sure what to put here.',
-  //     };
-  // }
 
   if (result.type === 'success') {
     session.set('userId', result.data.user.id);
