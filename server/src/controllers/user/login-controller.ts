@@ -2,8 +2,6 @@ import bcrypt from 'bcrypt';
 import { NextFunction, Request, Response } from 'express';
 import z from 'zod';
 import { db } from '../../db/db';
-import { signAccessToken } from '../../utils/sign-access-token';
-import { signRefreshToken } from '../../utils/sign-refresh-token';
 import { signToken } from '../../utils/sign-token';
 
 const LoginSchema = z.object({
@@ -17,26 +15,40 @@ export async function loginController(
   next: NextFunction
 ) {
   try {
-    // handle this error
-    const { email, password } = LoginSchema.parse(req.body);
+    const result = LoginSchema.safeParse(req.body);
 
-    // handle this error
+    if (!result.success) {
+      const errors = result.error.flatten().fieldErrors;
+
+      res.status(400).json({
+        formError: {
+          email: errors.email?.join(', '),
+          password: errors.password?.join(', '),
+        },
+      });
+      return;
+    }
+
     const user = await db.user.findUnique({
       where: {
-        email,
+        email: result.data.email,
       },
     });
 
     if (!user) {
-      res.status(400).json({ error: 'There is no user with that email.' });
+      res
+        .status(400)
+        .json({ error: { server: 'There is no user with that email.' } });
       return;
     }
 
-    // hash/compare the plain text password
-    const isValidPassword = await bcrypt.compare(password, user.password);
+    const isValidPassword = await bcrypt.compare(
+      result.data.password,
+      user.password
+    );
 
     if (!isValidPassword) {
-      res.status(403).json({ error: 'Invalid email or password.' });
+      res.status(403).json({ error: { server: 'Invalid email or password.' } });
       return;
     }
 
@@ -46,7 +58,6 @@ export async function loginController(
       email: user.email,
     });
 
-    // send response back saying user is logged in
     res.json({ message: 'logged in.', user: { userId: user.id, token } });
     return;
   } catch (err) {

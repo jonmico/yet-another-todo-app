@@ -58,6 +58,7 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 // TODO: Figure out typing
+// TODO: Probably make 'email already in use' error an error for email input. Will probably need a bit of work on backend.
 
 export default function Register({ actionData }: Route.ComponentProps) {
   return (

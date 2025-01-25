@@ -3,18 +3,34 @@ const URL = import.meta.env.VITE_URL;
 // TODO: Error handling!
 // TODO: Maybe switch to a generic fetch helper.
 
-interface LoginData {
-  message?: string;
-  user?: {
+type LoginSuccess = {
+  message: string;
+  user: {
     userId: string;
     token: string;
-  };
-  error?: {
-    message: string;
-  };
+  }
 }
 
-export async function login(email: string, password: string) {
+type FormError = {
+  error: {
+    email?: string;
+    password?: string;
+  }
+}
+
+type ServerError = {
+  error: {
+    server: string;
+  }
+}
+
+type LoginResult = 
+| {type: 'success', data: LoginSuccess}
+| {type: 'formError', data: FormError} 
+| {type: 'serverError', data: ServerError}
+
+
+export async function login(email: string, password: string): Promise<LoginResult> {
   try {
     const res = await fetch(`${URL}/api/user/login`, {
       method: 'POST',
@@ -25,15 +41,31 @@ export async function login(email: string, password: string) {
       },
     });
 
-    const data: LoginData = await res.json();
+    const data = await res.json();
 
+    if (!res.ok) {
+      if ('formError' in data) {
+        return {
+          type: 'formError',
+          data
+        }
+      }
+      
+      if ('serverError' in data){
+      return {
+        type: 'serverError',
+        data
+      }}
+    }
+
+    
     return data;
   } catch (err) {
-    console.error(err);
-    if (err instanceof Error) {
-      return { error: { message: err.message } };
-    } else {
-      return { error: { message: 'Something went wrong.' } };
-    }
+    return {
+      type: 'serverError',
+      data: {
+        error: {server: err instanceof Error ? err.message : 'Something went wrong.'}
+      }
+    };
   }
 }

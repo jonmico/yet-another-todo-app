@@ -28,10 +28,7 @@ export async function registerController(
     const result = RegisterSchema.safeParse(req.body);
 
     if (!result.success) {
-      console.log('Error Log:', result.error);
       const errorMessage = result.error.flatten().fieldErrors;
-
-      console.log('Error message:', errorMessage);
 
       const error: ErrorReturn = {
         email: errorMessage.email?.join(', '),

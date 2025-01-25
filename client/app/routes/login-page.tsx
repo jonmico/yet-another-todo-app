@@ -1,11 +1,10 @@
 import { redirect } from 'react-router';
 import { login } from '~/services/auth/login';
-import type { Route } from './+types/login-page';
 import { sessionCookie, tokenCookie } from '~/sessions.server';
 import Button from '~/ui/button';
 import Form from '~/ui/form';
 import FormInput from '~/ui/form-input';
-import FormError from '~/ui/form-error';
+import type { Route } from './+types/login-page';
 
 // TODO: Frontend validation.
 
@@ -29,13 +28,12 @@ export async function action({ request }: Route.ActionArgs) {
   const email = String(formData.get('email'));
   const password = String(formData.get('password'));
 
-  const data = await login(email, password);
+  const result = await login(email, password);
 
-  if (data.error) {
-    return { error: data.error };
-  }
+  console.log(result);
 
-  if (data.user) {
+  if (result.type === 'success') {
+    const {data} = result
     session.set('userId', data.user.userId);
     token.set('token', data.user.token);
 
@@ -47,23 +45,43 @@ export async function action({ request }: Route.ActionArgs) {
     });
   }
 
-  return null;
+  if (result.type ==='formError') {
+    const {data} = result;
+    return {
+      formError: {
+        email: data.error.email,
+        password: data.error.password
+      }
+    }
+  }
+
+  if (result.type === 'serverError') {
+    const {data} = result;
+    return {
+      serverError: {
+        error: {
+          server: data
+        }
+      }
+    }
+  }
 }
 
-export default function Login() {
+export default function Login({ actionData }: Route.ComponentProps) {
+  console.log(actionData)
   return (
     <div className='flex flex-col gap-4 pt-8'>
       <h2 className='text-center text-xl font-bold'>
         Log in to Yet Another Todo App
       </h2>
       <Form method='post'>
-        {/* <FormError message='This is a test error.' /> */}
         <FormInput
           label='Email'
           type='email'
           id='email'
           htmlFor='email'
           name='email'
+          required={true}
         />
         <FormInput
           label='Password'
@@ -71,6 +89,7 @@ export default function Login() {
           id='password'
           htmlFor='password'
           name='password'
+          required={true}
         />
         <Button type='submit'>Submit</Button>
       </Form>
