@@ -16,8 +16,6 @@ export async function loader({ request }: Route.LoaderArgs) {
   }
 }
 
-// TODO: Make better validation for frontend.
-
 export async function action({ request }: Route.ActionArgs) {
   const session = await sessionCookie.getSession(request.headers.get('Cookie'));
   const token = await tokenCookie.getSession(request.headers.get('Cookie'));
@@ -51,9 +49,6 @@ export async function action({ request }: Route.ActionArgs) {
     ],
   });
 }
-
-// TODO: Figure out typing
-// TODO: Probably make 'email already in use' error an error for email input. Will probably need a bit of work on backend.
 
 export default function Register({ actionData }: Route.ComponentProps) {
   return (

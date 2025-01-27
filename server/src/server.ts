@@ -13,8 +13,6 @@ declare module 'express' {
   }
 }
 
-// TODO: Clean up returns from server. Errors need to make more sense so the frontend can display errors from backend.
-
 const PORT = process.env.PORT;
 
 const app = express();

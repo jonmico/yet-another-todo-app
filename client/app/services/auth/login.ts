@@ -1,8 +1,5 @@
 const URL = import.meta.env.VITE_URL;
 
-// TODO: Error handling!
-// TODO: Maybe switch to a generic fetch helper.
-
 type LoginSuccess = {
   message: string;
   user: {

@@ -7,8 +7,6 @@ import FormInput from '~/ui/form-input';
 import type { Route } from './+types/login-page';
 import ServerError from '~/ui/server-error';
 
-// TODO: Frontend validation.
-
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await sessionCookie.getSession(request.headers.get('Cookie'));
 
