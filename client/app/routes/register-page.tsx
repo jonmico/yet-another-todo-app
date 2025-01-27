@@ -29,32 +29,27 @@ export async function action({ request }: Route.ActionArgs) {
 
   const result = await registerUser(email, password);
 
-  if (result.type === 'success') {
-    session.set('userId', result.data.user.id);
-    token.set('token', result.data.token);
+  if (result.type === 'error') {
+    const { data } = result;
 
-    throw redirect('/app', {
-      headers: [
-        ['Set-Cookie', await sessionCookie.commitSession(session)],
-        ['Set-Cookie', await tokenCookie.commitSession(token)],
-      ],
-    });
-  }
-
-  if (result.type === 'formError') {
-    const formError = {
-      email: result.data.formError.email,
-      password: result.data.formError.password,
+    return {
+      error: {
+        email: data.error.email,
+        password: data.error.password,
+        _server: data.error._server,
+      },
     };
-
-    return { formError };
   }
 
-  if (result.type === 'serverError') {
-    return { serverError: result.data.message };
-  }
+  session.set('userId', result.data.user.id);
+  token.set('token', result.data.token);
 
-  return { error: 'Registration failed.' };
+  throw redirect('/app', {
+    headers: [
+      ['Set-Cookie', await sessionCookie.commitSession(session)],
+      ['Set-Cookie', await tokenCookie.commitSession(token)],
+    ],
+  });
 }
 
 // TODO: Figure out typing
@@ -67,8 +62,8 @@ export default function Register({ actionData }: Route.ComponentProps) {
         Sign up for Yet Another Todo App
       </h2>
       <Form method='post'>
-        {actionData?.serverError ? (
-          <ServerError message={actionData.serverError} />
+        {actionData?.error._server ? (
+          <ServerError message={actionData.error._server} />
         ) : null}
         <FormInput
           required={true}
@@ -77,7 +72,7 @@ export default function Register({ actionData }: Route.ComponentProps) {
           name='email'
           id='email'
           type='email'
-          errorMessage={actionData?.formError?.email}
+          errorMessage={actionData?.error.email}
         />
         <FormInput
           required={true}
@@ -86,7 +81,7 @@ export default function Register({ actionData }: Route.ComponentProps) {
           name='password'
           id='password'
           type='password'
-          errorMessage={actionData?.formError?.password}
+          errorMessage={actionData?.error.password}
         />
         <Button type='submit'>Submit</Button>
       </Form>

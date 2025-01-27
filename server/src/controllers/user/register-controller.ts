@@ -28,14 +28,14 @@ export async function registerController(
     const result = RegisterSchema.safeParse(req.body);
 
     if (!result.success) {
-      const errorMessage = result.error.flatten().fieldErrors;
+      const errors = result.error.flatten().fieldErrors;
 
-      const error: ErrorReturn = {
-        email: errorMessage.email?.join(', '),
-        password: errorMessage.password?.join(', '),
-      };
-
-      res.status(400).json({ formError: error });
+      res.status(400).json({
+        error: {
+          email: errors.email?.join(', '),
+          password: errors.password?.join(', '),
+        },
+      });
       return;
     }
 
@@ -75,7 +75,9 @@ export async function registerController(
   } catch (err) {
     if (err instanceof PrismaClientKnownRequestError) {
       if (err.code === 'P2002') {
-        res.status(400).json({ message: 'Email is already in use.' });
+        res
+          .status(400)
+          .json({ error: { _server: 'Email is already in use.' } });
         return;
       }
     }

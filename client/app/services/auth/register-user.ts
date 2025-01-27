@@ -10,21 +10,17 @@ type RegisterSuccess = {
   token: string;
 };
 
-type RegisterResult =
-  | { type: 'success'; data: RegisterSuccess }
-  | { type: 'formError'; data: FormValidationError }
-  | { type: 'serverError'; data: ServerError };
-
-type FormValidationError = {
-  formError: {
+type RegisterError = {
+  error: {
     email?: string;
     password?: string;
+    _server?: string;
   };
 };
 
-type ServerError = {
-  message: string;
-};
+type RegisterResult =
+  | { type: 'success'; data: RegisterSuccess }
+  | { type: 'error'; data: RegisterError };
 
 export async function registerUser(
   email: string,
@@ -41,19 +37,14 @@ export async function registerUser(
     });
 
     if (!res.ok) {
-      const data = await res.json();
+      const error = await res.json();
 
-      if ('formError' in data) {
+      if ('error' in error) {
         return {
-          type: 'formError',
-          data: { formError: data.formError },
+          type: 'error',
+          data: error,
         };
       }
-
-      return {
-        type: 'serverError',
-        data: { message: data.message },
-      };
     }
 
     const data = await res.json();
@@ -64,9 +55,11 @@ export async function registerUser(
     };
   } catch (err) {
     return {
-      type: 'serverError',
+      type: 'error',
       data: {
-        message: err instanceof Error ? err.message : 'Something went wrong.',
+        error: {
+          _server: err instanceof Error ? err.message : 'Something went wrong.',
+        },
       },
     };
   }
