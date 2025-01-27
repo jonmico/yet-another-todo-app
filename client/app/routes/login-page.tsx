@@ -5,6 +5,7 @@ import Button from '~/ui/button';
 import Form from '~/ui/form';
 import FormInput from '~/ui/form-input';
 import type { Route } from './+types/login-page';
+import ServerError from '~/ui/server-error';
 
 // TODO: Frontend validation.
 
@@ -32,49 +33,40 @@ export async function action({ request }: Route.ActionArgs) {
 
   console.log(result);
 
-  if (result.type === 'success') {
+  if (result.type === 'error') {
     const { data } = result;
-    session.set('userId', data.user.userId);
-    token.set('token', data.user.token);
 
-    return redirect('/app', {
-      headers: [
-        ['Set-Cookie', await tokenCookie.commitSession(token)],
-        ['Set-Cookie', await sessionCookie.commitSession(session)],
-      ],
-    });
-  }
-
-  if (result.type === 'formError') {
-    const { data } = result;
     return {
-      formError: {
+      error: {
         email: data.error.email,
         password: data.error.password,
+        _server: data.error._server,
       },
     };
   }
 
-  if (result.type === 'serverError') {
-    const { data } = result;
-    return {
-      serverError: {
-        error: {
-          server: data,
-        },
-      },
-    };
-  }
+  const { data } = result;
+  session.set('userId', data.user.userId);
+  token.set('token', data.user.token);
+
+  throw redirect('/app', {
+    headers: [
+      ['Set-Cookie', await tokenCookie.commitSession(token)],
+      ['Set-Cookie', await sessionCookie.commitSession(session)],
+    ],
+  });
 }
 
 export default function Login({ actionData }: Route.ComponentProps) {
-  console.log(actionData);
   return (
     <div className='flex flex-col gap-4 pt-8'>
       <h2 className='text-center text-xl font-bold'>
         Log in to Yet Another Todo App
       </h2>
       <Form method='post'>
+        {actionData?.error._server && (
+          <ServerError message={actionData.error._server} />
+        )}
         <FormInput
           label='Email'
           type='email'
@@ -82,6 +74,7 @@ export default function Login({ actionData }: Route.ComponentProps) {
           htmlFor='email'
           name='email'
           required={true}
+          errorMessage={actionData?.error.email}
         />
         <FormInput
           label='Password'
@@ -90,6 +83,7 @@ export default function Login({ actionData }: Route.ComponentProps) {
           htmlFor='password'
           name='password'
           required={true}
+          errorMessage={actionData?.error.password}
         />
         <Button type='submit'>Submit</Button>
       </Form>

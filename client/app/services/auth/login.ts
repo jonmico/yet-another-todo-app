@@ -11,23 +11,17 @@ type LoginSuccess = {
   };
 };
 
-type FormError = {
+type LoginError = {
   error: {
     email?: string;
     password?: string;
-  };
-};
-
-type ServerError = {
-  error: {
-    server: string;
+    _server?: string;
   };
 };
 
 type LoginResult =
   | { type: 'success'; data: LoginSuccess }
-  | { type: 'formError'; data: FormError }
-  | { type: 'serverError'; data: ServerError };
+  | { type: 'error'; data: LoginError };
 
 export async function login(
   email: string,
@@ -43,31 +37,27 @@ export async function login(
       },
     });
 
-    const data = await res.json();
-
     if (!res.ok) {
-      if ('formError' in data) {
-        return {
-          type: 'formError',
-          data,
-        };
-      }
+      const error: {
+        error: { email?: string; password?: string; _server?: string };
+      } = await res.json();
 
-      if ('serverError' in data) {
+      if ('error' in error) {
         return {
-          type: 'serverError',
-          data,
+          type: 'error',
+          data: error,
         };
       }
     }
+    const data = await res.json();
 
     return data;
   } catch (err) {
     return {
-      type: 'serverError',
+      type: 'error',
       data: {
         error: {
-          server: err instanceof Error ? err.message : 'Something went wrong.',
+          _server: err instanceof Error ? err.message : 'Something went wrong.',
         },
       },
     };

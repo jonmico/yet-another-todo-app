@@ -21,7 +21,7 @@ export async function loginController(
       const errors = result.error.flatten().fieldErrors;
 
       res.status(400).json({
-        formError: {
+        error: {
           email: errors.email?.join(', '),
           password: errors.password?.join(', '),
         },
@@ -38,7 +38,7 @@ export async function loginController(
     if (!user) {
       res
         .status(400)
-        .json({ error: { server: 'There is no user with that email.' } });
+        .json({ error: { _server: 'There is no user with that email.' } });
       return;
     }
 
@@ -48,7 +48,9 @@ export async function loginController(
     );
 
     if (!isValidPassword) {
-      res.status(403).json({ error: { server: 'Invalid email or password.' } });
+      res
+        .status(403)
+        .json({ error: { _server: 'Invalid email or password.' } });
       return;
     }
 
