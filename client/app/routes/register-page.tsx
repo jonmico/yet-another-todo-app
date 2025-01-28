@@ -42,7 +42,7 @@ export async function action({ request }: Route.ActionArgs) {
   session.set('userId', result.data.user.id);
   token.set('token', result.data.token);
 
-  throw redirect('/app', {
+  return redirect('/app', {
     headers: [
       ['Set-Cookie', await sessionCookie.commitSession(session)],
       ['Set-Cookie', await tokenCookie.commitSession(token)],
