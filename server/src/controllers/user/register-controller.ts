@@ -14,11 +14,6 @@ const RegisterSchema = z.object({
     .max(50),
 });
 
-interface ErrorReturn {
-  email?: string;
-  password?: string;
-}
-
 export async function registerController(
   req: Request,
   res: Response,

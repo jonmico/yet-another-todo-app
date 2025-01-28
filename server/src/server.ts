@@ -2,6 +2,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import 'dotenv/config';
 import express, { NextFunction, Request, Response } from 'express';
 import { userRouter } from './routes/user-routes';
+import { todoRouter } from './routes/todo-routes';
 import cors, { CorsOptions } from 'cors';
 import cookieParser from 'cookie-parser';
 
@@ -27,6 +28,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use('/api/user', userRouter);
+app.use('/api/todo', todoRouter);
 
 app.use((err: unknown, req: Request, res: Response, _next: NextFunction) => {
   console.error(err);
