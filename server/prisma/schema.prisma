@@ -16,6 +16,7 @@ model User {
   todos     Todo[]
 }
 
+// TODO: I don't think we want userId to be unique?
 model Todo {
   id          String @id @default(uuid())
   title       String

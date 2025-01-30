@@ -19,7 +19,7 @@ export async function createTodoController(
   try {
     const result = CreateTodoSchema.safeParse(req.body);
 
-    if (!result.data) {
+    if (!result.success) {
       const errors = result.error.flatten().fieldErrors;
 
       res.status(400).json({
