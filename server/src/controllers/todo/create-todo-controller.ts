@@ -40,7 +40,10 @@ export async function createTodoController(
       },
     });
 
-    res.json(todo);
+    res.json({
+      message: 'todo created.',
+      todo,
+    });
   } catch (err) {
     next(err);
   }
