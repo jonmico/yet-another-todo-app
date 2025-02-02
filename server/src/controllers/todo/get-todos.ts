@@ -6,6 +6,10 @@ const GetTodosSchema = z.object({
   userId: z.string(),
 });
 
+const CookieSchema = z.object({
+  token: z.string(),
+});
+
 export async function getTodos(
   req: Request,
   res: Response,
@@ -13,6 +17,8 @@ export async function getTodos(
 ) {
   try {
     const result = GetTodosSchema.safeParse(req.body);
+
+    const cookieResult = CookieSchema.safeParse(req.cookies);
 
     if (!result.success) {
       const errors = result.error.flatten().fieldErrors;

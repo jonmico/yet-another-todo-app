@@ -29,8 +29,6 @@ export async function action({ request }: Route.ActionArgs) {
 
   const result = await login(email, password);
 
-  console.log(result);
-
   if (result.type === 'error') {
     const { data } = result;
 
@@ -44,6 +42,7 @@ export async function action({ request }: Route.ActionArgs) {
   }
 
   const { data } = result;
+
   session.set('userId', data.user.userId);
   token.set('token', data.user.token);
 

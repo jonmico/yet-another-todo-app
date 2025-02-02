@@ -48,7 +48,10 @@ export async function login(
     }
     const data = await res.json();
 
-    return data;
+    return {
+      type: 'success',
+      data,
+    };
   } catch (err) {
     return {
       type: 'error',
