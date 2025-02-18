@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { z } from 'zod';
 import { db } from '../../db/db';
+import { verifyToken } from '../../utils/verify-token';
 
 const GetTodosSchema = z.object({
   userId: z.string(),
@@ -16,26 +17,38 @@ export async function getTodos(
   next: NextFunction
 ) {
   try {
-    const result = GetTodosSchema.safeParse(req.body);
+    // const result = GetTodosSchema.safeParse(req.body);
 
     const cookieResult = CookieSchema.safeParse(req.cookies);
 
-    if (!result.success) {
-      const errors = result.error.flatten().fieldErrors;
+    console.log(cookieResult);
 
-      res.status(400).json({
-        error: {
-          userId: errors.userId?.join(', '),
-        },
-      });
+    // if (!result.success) {
+    //   const errors = result.error.flatten().fieldErrors;
+
+    //   res.status(400).json({
+    //     error: {
+    //       userId: errors.userId?.join(', '),
+    //     },
+    //   });
+    //   return;
+    // }
+
+    if (!cookieResult.success) {
+      res.json({ message: 'something is wrong with the cookie' });
       return;
     }
 
-    const todos = await db.todo.findMany({
-      where: { userId: result.data.userId },
-    });
+    const token = verifyToken(cookieResult.data.token);
 
-    res.json({ todos });
+    console.log('hello', token);
+
+    // const todos = await db.todo.findMany({
+    //   where: { userId: result.data.userId },
+    // });
+
+    // res.json({ todos });
+    res.json({ message: 'under construction' });
   } catch (err) {
     next(err);
   }
