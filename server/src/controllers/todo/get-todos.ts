@@ -3,12 +3,16 @@ import { z } from 'zod';
 import { db } from '../../db/db';
 import { verifyToken } from '../../utils/verify-token';
 
-const GetTodosSchema = z.object({
-  userId: z.string(),
-});
-
 const CookieSchema = z.object({
   token: z.string(),
+});
+
+const tokenSchema = z.object({
+  id: z.string(),
+  createdAt: z.string(),
+  email: z.string().email(),
+  iat: z.number(),
+  exp: z.number(),
 });
 
 export async function getTodos(
@@ -17,8 +21,6 @@ export async function getTodos(
   next: NextFunction
 ) {
   try {
-    // const result = GetTodosSchema.safeParse(req.body);
-
     const cookieResult = CookieSchema.safeParse(req.cookies);
 
     console.log(cookieResult);
@@ -41,14 +43,20 @@ export async function getTodos(
 
     const token = verifyToken(cookieResult.data.token);
 
-    console.log('hello', token);
+    const parsedToken = tokenSchema.safeParse(token);
 
-    // const todos = await db.todo.findMany({
-    //   where: { userId: result.data.userId },
-    // });
+    console.log('parsedToken', parsedToken);
 
-    // res.json({ todos });
-    res.json({ message: 'under construction' });
+    if (!parsedToken.success) {
+      res.json({ message: 'Missing token field?' });
+      return;
+    }
+
+    const todos = await db.todo.findMany({
+      where: { userId: parsedToken.data?.id },
+    });
+
+    res.json({ todos });
   } catch (err) {
     next(err);
   }

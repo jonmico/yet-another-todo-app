@@ -6,7 +6,6 @@ const URL = process.env.VITE_URL;
 
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await sessionCookie.getSession(request.headers.get('Cookie'));
-  const token = await tokenCookie.getSession(request.headers.get('Cookie'));
 
   const userId = session.get('userId');
 
@@ -14,17 +13,20 @@ export async function loader({ request }: Route.LoaderArgs) {
     return redirect('/login');
   }
 
-  const t = token.get('token');
+  const token = await tokenCookie.getSession(request.headers.get('Cookie'));
+  const tokenString = token.get('token');
 
-  const todos = await fetch(`${URL}/api/todo`, {
+  const res = await fetch(`${URL}/api/todo`, {
     method: 'GET',
     credentials: 'include',
     headers: {
-      Cookie: `token=${t}`,
+      Cookie: `token=${tokenString}`,
     },
   });
 
-  console.log(todos);
+  const data = await res.json();
+
+  console.log(data);
 
   return { userId };
 }
