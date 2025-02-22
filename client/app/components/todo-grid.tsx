@@ -6,17 +6,19 @@ type Todo = {
 };
 
 interface TodoGridProps {
-  todos?: Todo[];
+  todos: Todo[];
 }
 
 export default function TodoGrid({ todos }: TodoGridProps) {
-  if (!todos?.length) {
-    <div>No Todos!</div>;
+  console.log(todos);
+
+  if (!todos.length) {
+    return <div>No Todos!</div>;
   }
 
   return (
     <div>
-      {todos?.map((t) => {
+      {todos.map((t) => {
         return (
           <div key={t.id}>
             <div>Title: {t.title}</div>

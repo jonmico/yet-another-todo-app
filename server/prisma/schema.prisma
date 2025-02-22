@@ -16,11 +16,12 @@ model User {
   todos     Todo[]
 }
 
-// TODO: I don't think we want userId to be unique?
 model Todo {
   id          String @id @default(uuid())
   title       String
   description String
-  user        User   @relation(fields: [userId], references: [id])
   userId      String
+  user        User   @relation(fields: [userId], references: [id])
+
+  @@index([userId], map: "Todo_userId_fkey")
 }
