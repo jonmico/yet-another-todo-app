@@ -17,10 +17,13 @@ export default function TodoGrid({ todos }: TodoGridProps) {
   }
 
   return (
-    <div>
+    <div className='grid grid-cols-4 gap-4 p-4'>
       {todos.map((t) => {
         return (
-          <div key={t.id}>
+          <div
+            className='rounded border border-blue-800/80 p-4'
+            key={t.id}
+          >
             <div>Title: {t.title}</div>
             <div>Description: {t.description}</div>
           </div>

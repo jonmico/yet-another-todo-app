@@ -2,6 +2,7 @@ import { sessionCookie, tokenCookie } from '~/sessions.server';
 import type { Route } from './+types/dashboard';
 import { redirect } from 'react-router';
 import type { Todo } from '~/types/todo';
+import TodoGrid from '~/components/todo-grid';
 
 const URL = process.env.VITE_URL;
 
@@ -33,7 +34,7 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
   return (
     <div>
       <div>This is the dashboard</div>
-      {/* <TodoGrid todos={loaderData.todos} /> */}
+      <TodoGrid todos={loaderData.todos} />
     </div>
   );
 }

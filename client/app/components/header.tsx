@@ -9,12 +9,15 @@ export default function Header({ userId }: HeaderProps) {
   const isLoggedIn = !!userId;
 
   return (
-    <div className='p-4 flex justify-between items-center'>
+    <div className='flex items-center justify-between border-b border-b-slate-700 p-4'>
       <div>
-        <Link to={'/'} className='font-bold text-xl'>
+        <Link
+          to={'/'}
+          className='text-xl font-bold'
+        >
           YATA
         </Link>
-        <div className='text-sm '>(Yet Another Todo App)</div>
+        <div className='text-sm'>(Yet Another Todo App)</div>
       </div>
       <nav>
         <ul className='flex gap-5'>
