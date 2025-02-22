@@ -1,16 +1,39 @@
-import { Link } from 'react-router';
+import { Link, NavLink } from 'react-router';
 
+// TODO: Figure out how to not have styles apply to /app
 export default function AppNav() {
   return (
     <nav>
-      <ul className='flex gap-4'>
+      <ul className='flex justify-center gap-4 p-3'>
         <li>
-          <Link to={'/app'}>My Todos</Link>
+          <NavLink
+            className={({ isActive }) => {
+              return isActive ? 'text-blue-300' : '';
+            }}
+            to={'/app'}
+          >
+            My Todos
+          </NavLink>
         </li>
         <li>
-          <Link to={'create-todo'}>Create a Todo</Link>
+          <NavLink
+            to={'create-todo'}
+            className={({ isActive }) => {
+              return isActive ? 'text-blue-300' : '';
+            }}
+          >
+            Create a Todo
+          </NavLink>
         </li>
       </ul>
     </nav>
   );
+}
+
+interface NavItemProps {
+  children: React.ReactNode;
+}
+
+function NavItem({ children }: NavItemProps) {
+  return <li className={``}>{children}</li>;
 }

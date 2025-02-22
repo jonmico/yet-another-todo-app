@@ -1,6 +1,9 @@
 import { sessionCookie } from '~/sessions.server';
-import type { Route } from './+types/create-todo';
+import type { Route } from './+types/create-todo-page';
 import type { Todo } from '~/types/todo';
+import CreateTodo from '~/components/create-todo';
+
+const URL = process.env.VITE_URL;
 
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
@@ -28,6 +31,6 @@ export async function action({ request }: Route.ActionArgs) {
   return data;
 }
 
-export default function CreateTodo() {
-  return <div>This is the CreateTodo page!</div>;
+export default function CreateTodoPage() {
+  return <CreateTodo />;
 }

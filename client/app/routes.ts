@@ -10,7 +10,7 @@ export default [
     index('./routes/home-page.tsx'),
     route('app', './routes/app-page.tsx', [
       index('./routes/dashboard.tsx'),
-      route('create-todo', './routes/create-todo.tsx'),
+      route('create-todo', './routes/create-todo-page.tsx'),
     ]),
   ]),
   route('login', './routes/login-page.tsx'),
