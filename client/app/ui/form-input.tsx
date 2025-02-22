@@ -8,6 +8,8 @@ interface FormInputProps {
   htmlFor: string;
   required?: boolean;
   errorMessage?: string;
+  value?: string;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
 }
 
 export default function FormInput(props: FormInputProps) {
@@ -27,6 +29,8 @@ export default function FormInput(props: FormInputProps) {
           type={props.type}
           name={props.name}
           id={props.id}
+          value={props.value}
+          onChange={props.onChange}
         />
       </div>
       {props.errorMessage ? <FormError message={props.errorMessage} /> : null}

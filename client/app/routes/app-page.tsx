@@ -3,6 +3,7 @@ import { redirect, useFetcher } from 'react-router';
 import TodoGrid from '~/components/todo-grid';
 import { sessionCookie, tokenCookie } from '~/sessions.server';
 import type { Route } from './+types/app-page';
+import CreateTodo from '~/components/create-todo';
 
 const URL = process.env.VITE_URL;
 
@@ -65,48 +66,13 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export default function AppPage({ loaderData }: Route.ComponentProps) {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
   const { userId, todos } = loaderData;
-
-  const fetcher = useFetcher();
-
-  async function handleSubmit(evt: React.FormEvent<HTMLFormElement>) {
-    evt.preventDefault();
-
-    // TODO: Build in some type of form validation eventually.
-    await fetcher.submit({ title, description }, { method: 'POST' });
-
-    setTitle('');
-    setDescription('');
-  }
 
   return (
     <div>
       <p>{userId}</p>
       <div>This is the App page.</div>
-
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor='title'>Title</label>
-          <input
-            name='title'
-            id='title'
-            value={title}
-            onChange={(evt) => setTitle(evt.target.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor='description'>Description</label>
-          <input
-            name='description'
-            id='description'
-            value={description}
-            onChange={(evt) => setDescription(evt.target.value)}
-          />
-        </div>
-        <button>Submit?</button>
-      </form>
+      <CreateTodo />
       <TodoGrid todos={todos} />
     </div>
   );
