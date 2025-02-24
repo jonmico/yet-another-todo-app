@@ -33,7 +33,6 @@ export async function loader({ request }: Route.LoaderArgs) {
 export default function Dashboard({ loaderData }: Route.ComponentProps) {
   return (
     <div>
-      <div>This is the dashboard</div>
       <TodoGrid todos={loaderData.todos} />
     </div>
   );
