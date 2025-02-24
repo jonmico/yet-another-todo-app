@@ -8,7 +8,9 @@ export default function AppNav() {
         <li>
           <NavLink
             className={({ isActive }) => {
-              return isActive ? 'text-blue-300' : '';
+              return isActive
+                ? 'border-b border-b-slate-300 text-slate-300'
+                : 'text-slate-500 transition-colors hover:text-slate-400';
             }}
             to={'/dashboard'}
           >
@@ -19,7 +21,9 @@ export default function AppNav() {
           <NavLink
             to={'create-todo'}
             className={({ isActive }) => {
-              return isActive ? 'text-blue-300' : '';
+              return isActive
+                ? 'border-b border-b-slate-300 text-slate-300'
+                : 'text-slate-500 transition-colors hover:text-slate-400';
             }}
           >
             Create a Todo
