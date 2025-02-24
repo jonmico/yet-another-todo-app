@@ -2,6 +2,7 @@ import { sessionCookie } from '~/sessions.server';
 import type { Route } from './+types/create-todo-page';
 import type { Todo } from '~/types/todo';
 import CreateTodo from '~/components/create-todo';
+import { redirect } from 'react-router';
 
 const URL = process.env.VITE_URL;
 
@@ -28,7 +29,7 @@ export async function action({ request }: Route.ActionArgs) {
 
   const data: { todo: Todo } = await res.json();
 
-  return data;
+  return redirect(`/todo/${data.todo.id}`);
 }
 
 export default function CreateTodoPage() {

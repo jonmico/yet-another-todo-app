@@ -11,6 +11,7 @@ export default [
     layout('./layouts/protected-app-layout.tsx', [
       route('dashboard', './routes/dashboard.tsx'),
       route('create-todo', './routes/create-todo-page.tsx'),
+      route('todo/:todoId', './routes/todo.tsx'),
     ]),
   ]),
   route('login', './routes/login-page.tsx'),
