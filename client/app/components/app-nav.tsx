@@ -10,9 +10,9 @@ export default function AppNav() {
             className={({ isActive }) => {
               return isActive ? 'text-blue-300' : '';
             }}
-            to={'/app'}
+            to={'/dashboard'}
           >
-            My Todos
+            Dashboard
           </NavLink>
         </li>
         <li>
@@ -28,12 +28,4 @@ export default function AppNav() {
       </ul>
     </nav>
   );
-}
-
-interface NavItemProps {
-  children: React.ReactNode;
-}
-
-function NavItem({ children }: NavItemProps) {
-  return <li className={``}>{children}</li>;
 }

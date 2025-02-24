@@ -6,10 +6,10 @@ import {
 } from '@react-router/dev/routes';
 
 export default [
-  layout('./app-layout.tsx', [
+  layout('./layouts/app-layout.tsx', [
     index('./routes/home-page.tsx'),
-    route('app', './routes/app-page.tsx', [
-      index('./routes/dashboard.tsx'),
+    layout('./layouts/protected-app-layout.tsx', [
+      route('dashboard', './routes/dashboard.tsx'),
       route('create-todo', './routes/create-todo-page.tsx'),
     ]),
   ]),

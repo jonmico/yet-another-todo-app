@@ -12,7 +12,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   const session = await sessionCookie.getSession(request.headers.get('Cookie'));
 
   if (session.has('userId')) {
-    return redirect('/app');
+    return redirect('/dashboard');
   }
 }
 
@@ -42,7 +42,7 @@ export async function action({ request }: Route.ActionArgs) {
   session.set('userId', result.data.user.id);
   token.set('token', result.data.token);
 
-  return redirect('/app', {
+  return redirect('/dashboard', {
     headers: [
       ['Set-Cookie', await sessionCookie.commitSession(session)],
       ['Set-Cookie', await tokenCookie.commitSession(token)],
