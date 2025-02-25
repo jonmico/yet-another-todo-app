@@ -15,8 +15,6 @@ export async function getTodo(req: Request, res: Response, next: NextFunction) {
 
     const verifiedToken = verifyToken(token) as VerifiedToken;
 
-    console.log(verifiedToken);
-
     const todo = await db.todo.findFirst({ where: { id: todoId } });
 
     if (todo?.userId !== verifiedToken.id) {

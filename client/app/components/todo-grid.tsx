@@ -12,8 +12,6 @@ interface TodoGridProps {
 }
 
 export default function TodoGrid({ todos }: TodoGridProps) {
-  console.log(todos);
-
   if (!todos.length) {
     return <div>No Todos!</div>;
   }

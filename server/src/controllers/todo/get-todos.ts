@@ -23,8 +23,6 @@ export async function getTodos(
   try {
     const cookieResult = CookieSchema.safeParse(req.cookies);
 
-    console.log(cookieResult);
-
     // if (!result.success) {
     //   const errors = result.error.flatten().fieldErrors;
 
@@ -44,8 +42,6 @@ export async function getTodos(
     const token = verifyToken(cookieResult.data.token);
 
     const parsedToken = tokenSchema.safeParse(token);
-
-    console.log('parsedToken', parsedToken);
 
     if (!parsedToken.success) {
       res.json({ message: 'Missing token field?' });

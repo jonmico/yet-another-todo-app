@@ -17,7 +17,6 @@ export async function createTodoController(
   next: NextFunction
 ) {
   try {
-    console.log(req.body);
     const result = CreateTodoSchema.safeParse(req.body);
 
     if (!result.success) {
