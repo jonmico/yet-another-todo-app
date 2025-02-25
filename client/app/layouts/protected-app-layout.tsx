@@ -15,7 +15,9 @@ export default function ProtectedAppLayout() {
   return (
     <div>
       <AppNav />
-      <Outlet />
+      <div className='m-auto w-4/5'>
+        <Outlet />
+      </div>
     </div>
   );
 }

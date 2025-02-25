@@ -3,6 +3,7 @@ import type { Route } from './+types/create-todo-page';
 import type { Todo } from '~/types/todo';
 import CreateTodo from '~/components/create-todo';
 import { redirect } from 'react-router';
+import PageHeader from '~/components/page-header';
 
 const URL = process.env.VITE_URL;
 
@@ -33,5 +34,10 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export default function CreateTodoPage() {
-  return <CreateTodo />;
+  return (
+    <div>
+      <PageHeader>New Todo</PageHeader>
+      <CreateTodo />
+    </div>
+  );
 }

@@ -3,6 +3,7 @@ import type { Route } from './+types/dashboard';
 import { redirect } from 'react-router';
 import type { Todo } from '~/types/todo';
 import TodoGrid from '~/components/todo-grid';
+import PageHeader from '~/components/page-header';
 
 const URL = process.env.VITE_URL;
 
@@ -33,6 +34,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 export default function Dashboard({ loaderData }: Route.ComponentProps) {
   return (
     <div>
+      <PageHeader>Dashboard</PageHeader>
       <TodoGrid todos={loaderData.todos} />
     </div>
   );
