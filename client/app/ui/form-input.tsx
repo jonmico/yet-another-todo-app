@@ -24,7 +24,7 @@ export default function FormInput(props: FormInputProps) {
           {props.label}
         </label>
         <input
-          className={`h-8 rounded bg-gray-950 px-2 focus:outline-none ${isError ? 'border border-rose-500' : 'focus:ring focus:ring-blue-600'}`}
+          className={`h-8 rounded-sm bg-gray-950 px-2 focus:outline-hidden ${isError ? 'border border-rose-500' : 'focus:ring-3 focus:ring-blue-600'}`}
           required={props.required}
           type={props.type}
           name={props.name}

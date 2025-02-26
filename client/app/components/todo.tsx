@@ -8,7 +8,7 @@ interface TodoProps {
 export default function TodoComponent({ todo }: TodoProps) {
   return (
     <li
-      className='rounded border border-blue-800/80 transition-colors hover:bg-slate-900'
+      className='rounded-sm border border-blue-800/80 transition-colors hover:bg-slate-900'
       key={todo.id}
     >
       <Link

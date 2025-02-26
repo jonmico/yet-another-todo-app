@@ -20,7 +20,7 @@ export default function CreateTodo() {
   }
 
   return (
-    <div className='rounded border border-slate-700/80 bg-slate-900 p-4'>
+    <div className='rounded-sm border border-slate-700/80 bg-slate-900 p-4'>
       {fetcher.state !== 'idle' && <p>Creating Todo...</p>}
       <form
         className='flex flex-col gap-4'
