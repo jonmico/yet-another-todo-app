@@ -16,7 +16,12 @@ export default function TodoGrid({ todos }: TodoGridProps) {
     return <div>No Todos!</div>;
   }
 
-  const todoList = todos.map((t) => <TodoComponent todo={t} />);
+  const todoList = todos.map((t) => (
+    <TodoComponent
+      key={t.id}
+      todo={t}
+    />
+  ));
 
   return <ul className='grid grid-cols-4 gap-4 p-4'>{todoList}</ul>;
 }

@@ -9,7 +9,7 @@ export default function Header({ userId }: HeaderProps) {
   const isLoggedIn = !!userId;
 
   return (
-    <div className='flex items-center justify-between border-b border-b-slate-700 p-4'>
+    <div className='flex items-center justify-between border-b border-b-slate-800/75 p-4'>
       <div>
         <Link
           to={'/'}

@@ -35,7 +35,7 @@ export async function action({ request }: Route.ActionArgs) {
 
 export default function CreateTodoPage() {
   return (
-    <div>
+    <div className='flex flex-col gap-2'>
       <PageHeader>New Todo</PageHeader>
       <CreateTodo />
     </div>

@@ -33,7 +33,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 export default function Dashboard({ loaderData }: Route.ComponentProps) {
   return (
-    <div>
+    <div className='flex flex-col gap-2'>
       <PageHeader>Dashboard</PageHeader>
       <TodoGrid todos={loaderData.todos} />
     </div>
