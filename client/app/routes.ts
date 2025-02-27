@@ -14,6 +14,6 @@ export default [
       route('todo/:todoId', './routes/todo.tsx'),
     ]),
   ]),
-  route('login', './routes/login-page.tsx'),
+  route('login', './routes/login.tsx'),
   route('register', './routes/register.tsx'),
 ] satisfies RouteConfig;

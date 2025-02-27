@@ -4,9 +4,8 @@ import { sessionCookie, tokenCookie } from '~/sessions.server';
 import Button from '~/ui/button';
 import Form from '~/ui/form';
 import FormInput from '~/ui/form-input';
-import type { Route } from './+types/register-page';
-import FormError from '~/ui/form-error';
 import ServerError from '~/ui/server-error';
+import type { Route } from './+types/register';
 
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await sessionCookie.getSession(request.headers.get('Cookie'));

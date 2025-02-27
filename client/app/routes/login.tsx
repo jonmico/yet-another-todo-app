@@ -4,7 +4,7 @@ import { sessionCookie, tokenCookie } from '~/sessions.server';
 import Button from '~/ui/button';
 import Form from '~/ui/form';
 import FormInput from '~/ui/form-input';
-import type { Route } from './+types/login-page';
+import type { Route } from './+types/login';
 import ServerError from '~/ui/server-error';
 
 export async function loader({ request }: Route.LoaderArgs) {
