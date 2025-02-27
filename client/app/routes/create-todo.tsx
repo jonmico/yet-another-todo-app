@@ -1,9 +1,9 @@
-import { sessionCookie } from '~/sessions.server';
-import type { Route } from './+types/create-todo-page';
-import type { Todo } from '~/types/todo';
-import CreateTodo from '~/components/create-todo';
 import { redirect } from 'react-router';
+import CreateTodoForm from '~/components/create-todo-form';
 import PageHeader from '~/components/page-header';
+import { sessionCookie } from '~/sessions.server';
+import type { Todo } from '~/types/todo';
+import type { Route } from './+types/create-todo';
 
 const URL = process.env.VITE_URL;
 
@@ -33,11 +33,11 @@ export async function action({ request }: Route.ActionArgs) {
   return redirect(`/todo/${data.todo.id}`);
 }
 
-export default function CreateTodoPage() {
+export default function CreateTodo() {
   return (
     <div className='flex flex-col gap-2'>
       <PageHeader>New Todo</PageHeader>
-      <CreateTodo />
+      <CreateTodoForm />
     </div>
   );
 }

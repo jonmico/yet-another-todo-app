@@ -3,7 +3,7 @@ import { useFetcher } from 'react-router';
 import Button from '~/ui/button';
 import FormInput from '~/ui/form-input';
 
-export default function CreateTodo() {
+export default function CreateTodoForm() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
 

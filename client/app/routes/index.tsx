@@ -1,5 +1,5 @@
 import { sessionCookie } from '~/sessions.server';
-import type { Route } from './+types/home-page';
+import type { Route } from './+types/index';
 import { redirect } from 'react-router';
 
 export async function loader({ request }: Route.LoaderArgs) {
@@ -10,6 +10,6 @@ export async function loader({ request }: Route.LoaderArgs) {
   }
 }
 
-export default function HomePage() {
+export default function Index() {
   return <div>Welcome to Yet Another Todo App</div>;
 }

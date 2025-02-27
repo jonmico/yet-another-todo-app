@@ -1,6 +1,5 @@
 import { Link, NavLink } from 'react-router';
 
-// TODO: Figure out how to not have styles apply to /app
 export default function AppNav() {
   return (
     <nav>
