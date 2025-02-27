@@ -27,15 +27,7 @@ export async function action({ request }: Route.ActionArgs) {
   const result = await registerUser(email, password);
 
   if (result.type === 'error') {
-    const { data } = result;
-
-    return {
-      error: {
-        email: data.error.email,
-        password: data.error.password,
-        _server: data.error._server,
-      },
-    };
+    return { ...result.data };
   }
 
   session.set('userId', result.data.user.id);

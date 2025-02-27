@@ -1,5 +1,7 @@
 import type { Todo } from '~/types/todo';
 
+const URL = import.meta.env.VITE_URL;
+
 type CreateTodoSuccess = { message: string; todo: Todo };
 type CreateTodoError = {
   error: { title?: string; description?: string; _server?: string };

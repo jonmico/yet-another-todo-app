@@ -11,7 +11,7 @@ const CreateTodoSchema = z.object({
 
 // TODO: Make return better.
 // TODO: Error handling.
-export async function createTodoController(
+export async function createTodo(
   req: Request,
   res: Response,
   next: NextFunction
