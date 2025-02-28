@@ -3,6 +3,10 @@ import { useFetcher } from 'react-router';
 import Button from '~/ui/button';
 import FormInput from '~/ui/form-input';
 
+// TODO: Figure out what props to send to CreateTodoForm for validaton and whatnot.
+// TODO: Probably restyle this as it doesn't really look very good.
+// TODO: Swap out controlled components.
+
 export default function CreateTodoForm() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');

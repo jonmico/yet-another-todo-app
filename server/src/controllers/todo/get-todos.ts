@@ -15,6 +15,7 @@ const tokenSchema = z.object({
   exp: z.number(),
 });
 
+// TODO: Clean up this function? Look at commented out code and see what we need/don't need.
 export async function getTodos(
   req: Request,
   res: Response,

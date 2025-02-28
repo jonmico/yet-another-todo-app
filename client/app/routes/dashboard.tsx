@@ -18,6 +18,8 @@ export async function loader({ request }: Route.LoaderArgs) {
   const token = await tokenCookie.getSession(request.headers.get('Cookie'));
   const tokenString = token.get('token');
 
+  // TODO: Make this a getTodos function
+  // TODO: Look into making a generic handleFetch function to simplify API calls.
   const res = await fetch(`${URL}/api/todo`, {
     method: 'GET',
     credentials: 'include',

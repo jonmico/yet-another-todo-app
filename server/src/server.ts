@@ -22,6 +22,8 @@ app.use(express.json());
 app.use('/api/user', userRouter);
 app.use('/api/todo', todoRouter);
 
+// TODO: Does this error return work with the way we are handling errors elsewhere?
+// Example: Controllers return {error: {_server: 'x'}} to client.
 app.use((err: unknown, req: Request, res: Response, _next: NextFunction) => {
   console.error(err);
 

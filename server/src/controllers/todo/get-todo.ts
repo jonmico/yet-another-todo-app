@@ -2,12 +2,11 @@ import { NextFunction, Request, Response } from 'express';
 import { db } from '../../db/db';
 import { verifyToken } from '../../utils/verify-token';
 
-// TODO: Add Zod validation.
-
 type VerifiedToken = {
   id: string;
 };
 
+// TODO: Add Zod validation.
 export async function getTodo(req: Request, res: Response, next: NextFunction) {
   try {
     const { todoId } = req.params;
