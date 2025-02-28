@@ -21,6 +21,7 @@ export async function createTodo(
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
+        Cookie: `token=${token}`,
       },
       body: JSON.stringify({
         title,

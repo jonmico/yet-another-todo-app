@@ -2,31 +2,28 @@ import { NextFunction, Request, Response } from 'express';
 import { z } from 'zod';
 import { db } from '../../db/db';
 
-// TODO: Probably add some type of minimum length onto these
 const CreateTodoSchema = z.object({
   title: z.string(),
-  description: z.string(),
-  userId: z.string(),
+  description: z.string().min(5),
 });
 
-// TODO: Make return better.
-// TODO: Error handling.
 export async function createTodo(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
   try {
-    const result = CreateTodoSchema.safeParse(req.body);
+    const userId = res.locals.userId as string;
 
-    if (!result.success) {
-      const errors = result.error.flatten().fieldErrors;
+    const reqResult = CreateTodoSchema.safeParse(req.body);
+
+    if (!reqResult.success) {
+      const errors = reqResult.error.flatten().fieldErrors;
 
       res.status(400).json({
         error: {
           title: errors.title?.join(', '),
           description: errors.description?.join(', '),
-          userId: errors.userId?.join(', '),
         },
       });
       return;
@@ -34,9 +31,9 @@ export async function createTodo(
 
     const todo = await db.todo.create({
       data: {
-        title: result.data.title,
-        description: result.data.description,
-        userId: result.data.userId,
+        title: reqResult.data.title,
+        description: reqResult.data.description,
+        userId,
       },
     });
 
