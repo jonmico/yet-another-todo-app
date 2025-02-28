@@ -14,7 +14,7 @@ const RegisterSchema = z.object({
     .max(50),
 });
 
-export async function registerController(
+export async function register(
   req: Request,
   res: Response,
   next: NextFunction

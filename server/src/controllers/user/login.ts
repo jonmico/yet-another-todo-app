@@ -9,11 +9,7 @@ const LoginSchema = z.object({
   password: z.string(),
 });
 
-export async function loginController(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
+export async function login(req: Request, res: Response, next: NextFunction) {
   try {
     const result = LoginSchema.safeParse(req.body);
 

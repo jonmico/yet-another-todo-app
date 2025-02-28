@@ -1,8 +1,8 @@
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import 'dotenv/config';
 import express, { NextFunction, Request, Response } from 'express';
-import { userRouter } from './routes/user-routes';
-import { todoRouter } from './routes/todo-routes';
+import { userRouter } from './routes/user';
+import { todoRouter } from './routes/todo';
 import cors, { CorsOptions } from 'cors';
 import cookieParser from 'cookie-parser';
 
