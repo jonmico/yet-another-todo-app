@@ -2,20 +2,20 @@ import { NextFunction, Request, Response } from 'express';
 import { z } from 'zod';
 import { db } from '../../db/db';
 import { verifyToken } from '../../utils/verify-token';
+import { JsonWebTokenError } from 'jsonwebtoken';
 
 const CookieSchema = z.object({
   token: z.string(),
 });
 
-const tokenSchema = z.object({
-  id: z.string(),
-  createdAt: z.string(),
-  email: z.string().email(),
-  iat: z.number(),
-  exp: z.number(),
-});
+type Token = {
+  id: string;
+  createdAt: string;
+  email: string;
+  iat: number;
+  exp: number;
+};
 
-// TODO: Clean up this function? Look at commented out code and see what we need/don't need.
 export async function getTodos(
   req: Request,
   res: Response,
@@ -24,37 +24,26 @@ export async function getTodos(
   try {
     const cookieResult = CookieSchema.safeParse(req.cookies);
 
-    // if (!result.success) {
-    //   const errors = result.error.flatten().fieldErrors;
-
-    //   res.status(400).json({
-    //     error: {
-    //       userId: errors.userId?.join(', '),
-    //     },
-    //   });
-    //   return;
-    // }
-
     if (!cookieResult.success) {
-      res.json({ message: 'something is wrong with the cookie' });
+      res.status(400).json({ error: { token: 'Missing token.' } });
       return;
     }
 
-    const token = verifyToken(cookieResult.data.token);
-
-    const parsedToken = tokenSchema.safeParse(token);
-
-    if (!parsedToken.success) {
-      res.json({ message: 'Missing token field?' });
-      return;
-    }
+    const token = verifyToken(cookieResult.data.token) as Token;
 
     const todos = await db.todo.findMany({
-      where: { userId: parsedToken.data?.id },
+      where: { userId: token.id },
     });
 
     res.json({ todos });
   } catch (err) {
+    if (err instanceof JsonWebTokenError) {
+      res
+        .status(400)
+        .json({
+          error: { jwtError: { message: err.message, name: err.name } },
+        });
+    }
     next(err);
   }
 }
