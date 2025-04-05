@@ -30,6 +30,8 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   const data: { todos: Todo[] } = await res.json();
 
+  console.log(data);
+
   return { userId, todos: data.todos ? data.todos : [] };
 }
 

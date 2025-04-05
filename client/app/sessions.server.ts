@@ -16,7 +16,7 @@ export const sessionCookie = createCookieSessionStorage<
 >({
   cookie: {
     name: 'session',
-    maxAge: 7 * 24 * 60 * 60 * 1000,
+    maxAge: 1000,
     httpOnly: true,
     path: '/',
     sameSite: 'lax',
@@ -40,6 +40,6 @@ export const tokenCookie = createCookieSessionStorage<
     httpOnly: true,
     path: '/',
     sameSite: 'lax',
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    maxAge: 1000,
   },
 });

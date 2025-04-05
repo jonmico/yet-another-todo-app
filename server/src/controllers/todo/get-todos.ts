@@ -38,11 +38,10 @@ export async function getTodos(
     res.json({ todos });
   } catch (err) {
     if (err instanceof JsonWebTokenError) {
-      res
-        .status(400)
-        .json({
-          error: { jwtError: { message: err.message, name: err.name } },
-        });
+      res.status(400).json({
+        error: { jwtError: { message: err.message, name: err.name } },
+      });
+      return;
     }
     next(err);
   }
