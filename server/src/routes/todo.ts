@@ -5,5 +5,5 @@ import { handleToken } from '../middleware/handleToken';
 export const todoRouter = Router();
 
 todoRouter.post('/', handleToken, createTodo);
-todoRouter.get('/', getTodos);
-todoRouter.get('/:todoId', getTodo);
+todoRouter.get('/', handleToken, getTodos);
+todoRouter.get('/:todoId', handleToken, getTodo);

@@ -1,20 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { z } from 'zod';
-import { db } from '../../db/db';
-import { verifyToken } from '../../utils/verify-token';
 import { JsonWebTokenError } from 'jsonwebtoken';
-
-const CookieSchema = z.object({
-  token: z.string(),
-});
-
-type Token = {
-  id: string;
-  createdAt: string;
-  email: string;
-  iat: number;
-  exp: number;
-};
+import { db } from '../../db/db';
 
 export async function getTodos(
   req: Request,
@@ -22,17 +8,10 @@ export async function getTodos(
   next: NextFunction
 ) {
   try {
-    const cookieResult = CookieSchema.safeParse(req.cookies);
-
-    if (!cookieResult.success) {
-      res.status(400).json({ error: { token: 'Missing token.' } });
-      return;
-    }
-
-    const token = verifyToken(cookieResult.data.token) as Token;
+    const userId = res.locals.userId;
 
     const todos = await db.todo.findMany({
-      where: { userId: token.id },
+      where: { userId },
     });
 
     res.json({ todos });
