@@ -5,6 +5,7 @@ import { userRouter } from './routes/user';
 import { todoRouter } from './routes/todo';
 import cors, { CorsOptions } from 'cors';
 import cookieParser from 'cookie-parser';
+import { JsonWebTokenError } from 'jsonwebtoken';
 
 const PORT = process.env.PORT;
 
@@ -22,14 +23,27 @@ app.use(express.json());
 app.use('/api/user', userRouter);
 app.use('/api/todo', todoRouter);
 
-// TODO: Does this error return work with the way we are handling errors elsewhere?
-// Example: Controllers return {error: {_server: 'x'}} to client.
+/*
+API returns errors from server in the form of { error: { _server: "Error here" }}
+*/
 app.use((err: unknown, req: Request, res: Response, _next: NextFunction) => {
   console.error(err);
 
+  // Catch all PrismaClient errors.
   if (err instanceof PrismaClientKnownRequestError) {
-    res.status(500).json({ error: 'Database error.', details: err.meta });
+    res.status(500).json({
+      error: {
+        _server: `${err.name} - ${err.code}: ${err.message}`,
+      },
+    });
     return;
+  }
+
+  // Catch all JWT Errors.
+  if (err instanceof JsonWebTokenError) {
+    res.status(500).json({
+      error: { _server: `${err.name} - ${err.message}` },
+    });
   }
 
   if (err instanceof Error) {
