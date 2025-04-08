@@ -39,7 +39,6 @@ Band-aid fix: Change TodoGrid to accept todos as Todo[] or undefined.
 Handle undefined case in todos.length check.
 */
 export default function Dashboard({ loaderData }: Route.ComponentProps) {
-  console.log(loaderData);
   return (
     <div className='flex flex-col gap-2'>
       <PageHeader>Dashboard</PageHeader>
