@@ -8,11 +8,11 @@ type Todo = {
 };
 
 interface TodoGridProps {
-  todos: Todo[];
+  todos: Todo[] | undefined;
 }
 
 export default function TodoGrid({ todos }: TodoGridProps) {
-  if (!todos.length) {
+  if (!todos || !todos.length) {
     return <div>No Todos!</div>;
   }
 

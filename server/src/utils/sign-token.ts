@@ -10,7 +10,7 @@ type JWT_Payload = {
 };
 
 export function signToken(payload: JWT_Payload) {
-  const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '10s' });
+  const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1000s' });
 
   return token;
 }
