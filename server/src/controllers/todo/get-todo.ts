@@ -1,12 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { db } from '../../db/db';
-import { verifyToken } from '../../utils/verify-token';
 
-type VerifiedToken = {
-  id: string;
-};
-
-// TODO: Add Zod validation.
 export async function getTodo(req: Request, res: Response, next: NextFunction) {
   try {
     const { todoId } = req.params;
@@ -14,8 +8,17 @@ export async function getTodo(req: Request, res: Response, next: NextFunction) {
 
     const todo = await db.todo.findFirst({ where: { id: todoId } });
 
-    if (todo?.userId !== userId) {
-      res.json({ message: 'Access denied, bozo.' });
+    if (!todo) {
+      res.status(404).json({ error: { _server: 'Todo not found.' } });
+      return;
+    }
+
+    if (todo.userId !== userId) {
+      res
+        .status(403)
+        .json({
+          error: { _server: 'You are not authorized to access this record.' },
+        });
       return;
     }
 
