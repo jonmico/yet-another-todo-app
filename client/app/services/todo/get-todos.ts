@@ -8,7 +8,7 @@ type GetTodosSuccess = {
 
 type GetTodosError = {
   error: {
-    _server?: string;
+    _server: string;
   };
 };
 

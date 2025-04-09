@@ -47,13 +47,15 @@ app.use((err: unknown, req: Request, res: Response, _next: NextFunction) => {
   }
 
   if (err instanceof Error) {
-    res
-      .status(500)
-      .json({ error: 'Server error.', message: err.message, stack: err.stack });
+    res.status(500).json({
+      error: {
+        _server: `Something went wrong. err.message: ${err.message} - err.stack: ${err.stack}`,
+      },
+    });
     return;
   }
 
-  res.status(500).json({ error: 'Unknown error occurred.' });
+  res.status(500).json({ error: { _server: 'Unknown error occurred.' } });
   return;
 });
 

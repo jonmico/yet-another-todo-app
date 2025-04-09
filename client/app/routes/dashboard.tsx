@@ -37,6 +37,8 @@ export async function loader({ request }: Route.LoaderArgs) {
 /*
 Band-aid fix: Change TodoGrid to accept todos as Todo[] or undefined.
 Handle undefined case in todos.length check.
+
+Update: This might actually be intended.
 */
 export default function Dashboard({ loaderData }: Route.ComponentProps) {
   return (
