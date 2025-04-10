@@ -44,6 +44,7 @@ app.use((err: unknown, req: Request, res: Response, _next: NextFunction) => {
     res.status(500).json({
       error: { _server: `${err.name} - ${err.message}` },
     });
+    return;
   }
 
   if (err instanceof Error) {
