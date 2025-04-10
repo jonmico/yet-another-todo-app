@@ -17,7 +17,7 @@ type GetTodoResult =
   | { type: 'error'; data: GetTodoError };
 
 export async function getTodo(
-  tokenString: string,
+  tokenString: string | undefined,
   todoId: string,
 ): Promise<GetTodoResult> {
   try {
@@ -25,9 +25,19 @@ export async function getTodo(
       method: 'GET',
       credentials: 'include',
       headers: {
-        Cookie: `token=${token.get('token')}`,
+        Cookie: `token=${tokenString}`,
       },
     });
+
+    if (!res.ok) {
+      const error: GetTodoError = await res.json();
+
+      return { type: 'error', data: error };
+    }
+
+    const data: GetTodoSuccess = await res.json();
+
+    return { type: 'success', data };
   } catch (err) {
     return {
       type: 'error',
