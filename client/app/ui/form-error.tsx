@@ -3,5 +3,5 @@ interface FormErrorProps {
 }
 
 export default function FormError({ message }: FormErrorProps) {
-  return <div className='text-rose-500'>{message}</div>;
+  return <div className='text-red-400'>{message}</div>;
 }

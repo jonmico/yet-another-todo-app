@@ -1,4 +1,4 @@
-import { redirect, useNavigation } from 'react-router';
+import { Form, redirect, useNavigation } from 'react-router';
 import PageHeader from '~/components/page-header';
 import { createTodo } from '~/services/todo/create-todo';
 import { tokenCookie } from '~/sessions.server';
@@ -6,9 +6,6 @@ import type { Route } from './+types/create-todo';
 import Button from '~/ui/button';
 import FormInput from '~/ui/form-input';
 import ServerError from '~/ui/server-error';
-
-// TODO: Add form validation.
-// FIXME: Why is this refreshing?
 
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
@@ -62,7 +59,7 @@ function CreateTodoForm({ error }: CreateTodoFormProps) {
 
   return (
     <div className='rounded-sm border border-slate-700/80 bg-slate-900 p-4'>
-      <form
+      <Form
         method='post'
         className='flex flex-col gap-4'
       >
@@ -82,7 +79,7 @@ function CreateTodoForm({ error }: CreateTodoFormProps) {
           errorMessage={error?.description}
         />
         <Button type='submit'>Create Todo</Button>
-      </form>
+      </Form>
     </div>
   );
 }
