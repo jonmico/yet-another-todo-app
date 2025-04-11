@@ -71,13 +71,22 @@ function CreateTodoForm({ error }: CreateTodoFormProps) {
           htmlFor='title'
           errorMessage={error?.title}
         />
-        <FormInput
-          label='Description'
-          name='description'
-          id='description'
-          htmlFor='description'
-          errorMessage={error?.description}
-        />
+        <div className='flex flex-col'>
+          <label
+            className='font-semibold text-slate-300'
+            htmlFor='description'
+          >
+            Description
+          </label>
+          <textarea
+            name='description'
+            id='description'
+            className={`rounded-sm bg-gray-950 px-2 py-1 focus:outline-hidden ${error?.description ? 'border border-red-400' : 'focus:ring-3 focus:ring-blue-600'}`}
+          ></textarea>
+          {error?.description && (
+            <div className='text-red-400'>{error?.description}</div>
+          )}
+        </div>
         <Button type='submit'>Create Todo</Button>
       </Form>
     </div>
