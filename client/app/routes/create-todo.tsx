@@ -59,35 +59,42 @@ function CreateTodoForm({ error }: CreateTodoFormProps) {
 
   return (
     <div className='rounded-sm border border-slate-700/80 bg-slate-900 p-4'>
-      <Form
-        method='post'
-        className='flex flex-col gap-4'
-      >
-        {error?._server && <ServerError message={error._server} />}
-        <FormInput
-          label='Title'
-          name='title'
-          id='title'
-          htmlFor='title'
-          errorMessage={error?.title}
-        />
-        <div className='flex flex-col'>
-          <label
-            className='font-semibold text-slate-300'
-            htmlFor='description'
+      <Form method='post'>
+        <fieldset
+          className='flex flex-col gap-4'
+          disabled={navigation.state !== 'idle'}
+        >
+          {error?._server && <ServerError message={error._server} />}
+          <FormInput
+            label='Title'
+            name='title'
+            id='title'
+            htmlFor='title'
+            errorMessage={error?.title}
+          />
+          <div className='flex flex-col'>
+            <label
+              className='font-semibold text-slate-300'
+              htmlFor='description'
+            >
+              Description
+            </label>
+            <textarea
+              name='description'
+              id='description'
+              className={`rounded-sm bg-gray-950 px-2 py-1 focus:outline-hidden ${error?.description ? 'border border-red-400' : 'focus:ring-3 focus:ring-blue-600'}`}
+            ></textarea>
+            {error?.description && (
+              <div className='text-red-400'>{error?.description}</div>
+            )}
+          </div>
+          <Button
+            type='submit'
+            loadingState={navigation.state}
           >
-            Description
-          </label>
-          <textarea
-            name='description'
-            id='description'
-            className={`rounded-sm bg-gray-950 px-2 py-1 focus:outline-hidden ${error?.description ? 'border border-red-400' : 'focus:ring-3 focus:ring-blue-600'}`}
-          ></textarea>
-          {error?.description && (
-            <div className='text-red-400'>{error?.description}</div>
-          )}
-        </div>
-        <Button type='submit'>Create Todo</Button>
+            Create Todo
+          </Button>
+        </fieldset>
       </Form>
     </div>
   );

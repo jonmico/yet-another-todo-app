@@ -1,15 +1,18 @@
+import Spinner from './spinner';
+
 interface ButtonProps {
   type?: 'submit' | 'reset' | 'button';
   children: React.ReactNode;
+  loadingState?: 'idle' | 'loading' | 'submitting';
 }
 
-export default function Button({ type, children }: ButtonProps) {
+export default function Button({ type, children, loadingState }: ButtonProps) {
   return (
     <button
-      className='font-semibold transition background-color ease-in-out delay-150 bg-blue-600 rounded-sm p-2  hover:bg-blue-700'
+      className='background-color flex items-center justify-center gap-2 rounded-sm bg-blue-600 p-2 font-semibold transition delay-150 ease-in-out hover:bg-blue-700'
       type={type}
     >
-      {children}
+      {loadingState === 'loading' && <Spinner />} {children}
     </button>
   );
 }
