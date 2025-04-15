@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model todo {
+model Todo {
   id          String @id
   title       String
   description String
@@ -15,7 +15,7 @@ model todo {
   user        User   @relation(fields: [userId], references: [id])
 }
 
-model user {
+model User {
   id        String   @id
   email     String   @unique(map: "User_email_key")
   password  String
