@@ -41,6 +41,7 @@ export async function createTodo(
       message: 'todo created.',
       todo,
     });
+    return;
   } catch (err) {
     next(err);
   }
