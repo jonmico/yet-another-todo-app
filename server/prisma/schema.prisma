@@ -22,6 +22,4 @@ model Todo {
   description String
   userId      String
   user        User   @relation(fields: [userId], references: [id])
-
-  @@index([userId], map: "Todo_userId_fkey")
 }
