@@ -52,7 +52,7 @@ interface CreateTodoFormProps {
     | undefined;
 }
 
-// TODO: Figure out what props to send to CreateTodoForm for validaton and whatnot.
+// TODO: Look at disabled state. Not sure about this one, chief.
 // TODO: Probably restyle this as it doesn't really look very good.
 function CreateTodoForm({ error }: CreateTodoFormProps) {
   const navigation = useNavigation();
@@ -82,7 +82,8 @@ function CreateTodoForm({ error }: CreateTodoFormProps) {
             <textarea
               name='description'
               id='description'
-              className={`rounded-sm bg-gray-950 px-2 py-1 focus:outline-hidden ${error?.description ? 'border border-red-400' : 'focus:ring-3 focus:ring-blue-600'}`}
+              disabled={navigation.state != 'idle'}
+              className={`rounded-sm bg-gray-950 px-2 py-1 focus:outline-hidden disabled:bg-gray-950/50 ${error?.description ? 'border border-red-400' : 'focus:ring-3 focus:ring-blue-600'}`}
             ></textarea>
             {error?.description && (
               <div className='text-red-400'>{error?.description}</div>
