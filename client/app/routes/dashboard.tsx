@@ -33,6 +33,8 @@ export async function loader({ request }: Route.LoaderArgs) {
   return { todos: result.data.todos };
 }
 
+// FIXME: Why do my redirects for expired tokens not destroySession?
+
 // FIXME: Why is this returning undefined todos with the error?
 /*
 Band-aid fix: Change TodoGrid to accept todos as Todo[] or undefined.
