@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express';
-import { JsonWebTokenError } from 'jsonwebtoken';
 import { db } from '../../db/db';
 
 export async function getTodos(
