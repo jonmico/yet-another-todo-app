@@ -12,11 +12,13 @@ export default function TodoComponent({ todo }: TodoProps) {
       key={todo.id}
     >
       <Link
-        className='inline-block p-4'
+        className='block p-4'
         to={`/todo/${todo.id}`}
       >
-        <div>Title: {todo.title}</div>
-        <div>Description: {todo.description}</div>
+        <div className='border-b border-b-slate-600/70 text-lg font-semibold text-slate-300'>
+          {todo.title}
+        </div>
+        <div className='truncate'>{todo.description}</div>
       </Link>
     </li>
   );
