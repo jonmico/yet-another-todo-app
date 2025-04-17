@@ -52,7 +52,6 @@ interface CreateTodoFormProps {
     | undefined;
 }
 
-// TODO: Look at disabled state. Not sure about this one, chief.
 // TODO: Probably restyle this as it doesn't really look very good.
 function CreateTodoForm({ error }: CreateTodoFormProps) {
   const navigation = useNavigation();
@@ -70,6 +69,7 @@ function CreateTodoForm({ error }: CreateTodoFormProps) {
             name='title'
             id='title'
             htmlFor='title'
+            navigationState={navigation.state}
             errorMessage={error?.title}
           />
           <div className='flex flex-col'>

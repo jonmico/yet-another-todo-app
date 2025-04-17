@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { JsonWebTokenError } from 'jsonwebtoken';
-import { verifyToken } from '../utils/verify-token';
 import { z } from 'zod';
+import { verifyToken } from '../utils/verify-token';
 
 const CookieSchema = z.object({
   token: z.string(),
@@ -41,9 +40,6 @@ export async function handleToken(
 
     next();
   } catch (err) {
-    if (err instanceof JsonWebTokenError) {
-      res.json({ error: { _server: err.message } });
-    }
     next(err);
   }
 }
