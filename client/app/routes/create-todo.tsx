@@ -52,7 +52,6 @@ interface CreateTodoFormProps {
     | undefined;
 }
 
-// TODO: Probably restyle this as it doesn't really look very good.
 function CreateTodoForm({ error }: CreateTodoFormProps) {
   const navigation = useNavigation();
 
