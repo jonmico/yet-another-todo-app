@@ -1,10 +1,9 @@
+import { redirect } from 'react-router';
+import PageHeader from '~/components/page-header';
+import TodoGrid from '~/components/todo-grid';
+import { getTodos } from '~/services/todo/get-todos';
 import { sessionCookie, tokenCookie } from '~/sessions.server';
 import type { Route } from './+types/dashboard';
-import { redirect } from 'react-router';
-import type { Todo } from '~/types/todo';
-import TodoGrid from '~/components/todo-grid';
-import PageHeader from '~/components/page-header';
-import { getTodos } from '~/services/todo/get-todos';
 
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await sessionCookie.getSession(request.headers.get('Cookie'));

@@ -6,6 +6,7 @@ import type { Route } from './+types/create-todo';
 import Button from '~/ui/button';
 import FormInput from '~/ui/form-input';
 import ServerError from '~/ui/server-error';
+import FormTextArea from '~/ui/form-text-area';
 
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
@@ -71,23 +72,14 @@ function CreateTodoForm({ error }: CreateTodoFormProps) {
             navigationState={navigation.state}
             errorMessage={error?.title}
           />
-          <div className='flex flex-col'>
-            <label
-              className='font-semibold text-slate-300'
-              htmlFor='description'
-            >
-              Description
-            </label>
-            <textarea
-              name='description'
-              id='description'
-              disabled={navigation.state != 'idle'}
-              className={`rounded-sm bg-gray-950 px-2 py-1 focus:outline-hidden disabled:bg-gray-950/50 ${error?.description ? 'border border-red-400' : 'focus:ring-3 focus:ring-blue-600'}`}
-            ></textarea>
-            {error?.description && (
-              <div className='text-red-400'>{error?.description}</div>
-            )}
-          </div>
+          <FormTextArea
+            name='description'
+            id='description'
+            label='Description'
+            htmlFor='description'
+            navigationState={navigation.state}
+            errorMessage={error?.description}
+          />
           <Button
             type='submit'
             loadingState={navigation.state}

@@ -1,6 +1,4 @@
-import FormError from './form-error';
-
-interface FormInputProps {
+interface FormTextAreaProps {
   label: string;
   type?: string;
   name: string;
@@ -14,14 +12,13 @@ interface FormInputProps {
   defaultValue?: string;
 }
 
-export default function FormInput(props: FormInputProps) {
+export default function FormTextArea(props: FormTextAreaProps) {
   const isError = !!props.errorMessage;
   let isNavigating = false;
 
   if (props.navigationState && props.navigationState !== 'idle') {
     isNavigating = true;
   }
-
   return (
     <div className='flex flex-col'>
       <label
@@ -30,18 +27,16 @@ export default function FormInput(props: FormInputProps) {
       >
         {props.label}
       </label>
-      <input
-        className={`h-8 rounded-sm bg-gray-950 px-2 focus:outline-hidden ${isError ? 'border border-red-400' : 'focus:ring-3 focus:ring-blue-600'} disabled:bg-gray-950/50`}
-        required={props.required}
-        type={props.type}
-        name={props.name}
-        id={props.id}
-        value={props.value}
-        onChange={props.onChange}
+      <textarea
+        name='description'
+        id='description'
         disabled={isNavigating}
+        className={`rounded-sm bg-gray-950 px-2 py-1 focus:outline-hidden disabled:bg-gray-950/50 ${isError ? 'border border-red-400' : 'focus:ring-3 focus:ring-blue-600'}`}
         defaultValue={props.defaultValue}
-      />
-      {props.errorMessage ? <FormError message={props.errorMessage} /> : null}
+      ></textarea>
+      {props.errorMessage && (
+        <div className='text-red-400'>{props.errorMessage}</div>
+      )}
     </div>
   );
 }

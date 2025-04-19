@@ -6,6 +6,10 @@ interface ButtonProps {
   loadingState?: 'idle' | 'loading' | 'submitting';
 }
 
+/*
+FIXME: Loading spinner shows on navigation, which is unintended. We do not want to show a loading spinner when we are navigating
+between pages, only when a form is submitted. Possible fix: only show loading spinner on 'submitting'?
+*/
 export default function Button({ type, children, loadingState }: ButtonProps) {
   return (
     <button
