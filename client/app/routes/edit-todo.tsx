@@ -33,7 +33,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   return { todo: result.data.todo };
 }
 
-export async function action({ request }: Route.ActionArgs) {
+export async function action({ request, params }: Route.ActionArgs) {
   const formData = await request.formData();
 
   const title = formData.get('title') as string;
@@ -43,7 +43,9 @@ export async function action({ request }: Route.ActionArgs) {
 
   const tokenString = token.get('token');
 
-  editTodo(tokenString, title, description);
+  const result = await editTodo(tokenString, params.todoId, title, description);
+
+  console.log(result);
 
   // TODO: Finish this function.
 }
