@@ -1,11 +1,30 @@
+import type { Todo } from '~/types/todo';
+
 const URL = import.meta.env.VITE_URL;
+
+type EditTodoSuccess = {
+  message: string;
+  todo: Todo;
+};
+
+type EditTodoError = {
+  error: {
+    title?: string;
+    description?: string;
+    _server?: string;
+  };
+};
+
+type EditTodoResult =
+  | { type: 'success'; data: EditTodoSuccess }
+  | { type: 'error'; data: EditTodoError };
 
 export async function editTodo(
   token: string | undefined,
   todoId: string,
   title: string,
   description: string,
-) {
+): Promise<EditTodoResult> {
   try {
     const res = await fetch(`${URL}/api/todo/${todoId}/edit`, {
       method: 'PUT',
@@ -21,13 +40,25 @@ export async function editTodo(
       console.log(res);
     }
 
+    if (!res.ok) {
+      const error = await res.json();
+
+      if ('error' in error) {
+        return { type: 'error', data: error };
+      }
+    }
+
     const data = await res.json();
 
-    console.log(data);
-
-    return data;
+    return { type: 'success', data };
   } catch (err) {
-    console.log(err);
-    return { error: 'Something went wrong.' };
+    return {
+      type: 'error',
+      data: {
+        error: {
+          _server: err instanceof Error ? err.message : 'Something went wrong.',
+        },
+      },
+    };
   }
 }

@@ -4,7 +4,7 @@ import { db } from '../../db/db';
 
 const EditTodoSchema = z.object({
   title: z.string(),
-  description: z.string(),
+  description: z.string().min(5),
 });
 
 export default async function editTodo(

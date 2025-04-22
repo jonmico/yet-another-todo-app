@@ -25,7 +25,6 @@ export async function action({ request }: Route.ActionArgs) {
   const result = await createTodo(title, description, tokenString);
 
   if (result.type === 'error') {
-    console.log('createTodo error:', result.data);
     return { ...result.data };
   }
 

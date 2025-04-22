@@ -6,6 +6,7 @@ import FormTextArea from '~/ui/form-text-area';
 import type { Route } from './+types/edit-todo';
 import Button from '~/ui/button';
 import { editTodo } from '~/services/todo/edit-todo';
+import PageHeader from '~/components/page-header';
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const session = await sessionCookie.getSession(request.headers.get('Cookie'));
@@ -43,15 +44,23 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   const tokenString = token.get('token');
 
-  const result = await editTodo(tokenString, params.todoId, title, description);
+  const { todoId } = params;
 
-  console.log(result);
+  const result = await editTodo(tokenString, todoId, title, description);
 
-  // TODO: Finish this function.
+  if (result.type === 'error') {
+    return { ...result.data };
+  }
+
+  return redirect(`/todo/${todoId}`);
 }
 
-export default function EditTodo({ loaderData }: Route.ComponentProps) {
+export default function EditTodo({
+  loaderData,
+  actionData,
+}: Route.ComponentProps) {
   const navigation = useNavigation();
+  console.log(actionData);
   if (loaderData.error) {
     return (
       <div>
@@ -61,8 +70,8 @@ export default function EditTodo({ loaderData }: Route.ComponentProps) {
   }
 
   return (
-    <div>
-      <h2>Edit Todo</h2>
+    <div className='flex flex-col gap-2'>
+      <PageHeader>Edit Todo</PageHeader>
       <div className='rounded-sm border border-slate-700/80 bg-slate-900 p-4'>
         <Form method='put'>
           <fieldset
@@ -82,6 +91,7 @@ export default function EditTodo({ loaderData }: Route.ComponentProps) {
               id='description'
               htmlFor='description'
               defaultValue={loaderData.todo.description}
+              errorMessage={actionData?.error.description}
             />
             <Button>Edit Todo</Button>
           </fieldset>

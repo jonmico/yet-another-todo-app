@@ -15,9 +15,11 @@ export default function TodoComponent({ todo }: TodoProps) {
         className='block p-4'
         to={`/todo/${todo.id}`}
       >
-        <div className='border-b border-b-slate-600/70 text-lg font-semibold text-slate-300'>
-          {todo.title}
-        </div>
+        {todo.title && (
+          <div className='border-b border-b-slate-600/70 text-lg font-semibold text-slate-300'>
+            {todo.title}
+          </div>
+        )}
         <div className='truncate'>{todo.description}</div>
       </Link>
     </li>
