@@ -7,7 +7,7 @@ const EditTodoSchema = z.object({
   description: z.string().min(5),
 });
 
-export default async function editTodo(
+export async function editTodo(
   req: Request,
   res: Response,
   next: NextFunction

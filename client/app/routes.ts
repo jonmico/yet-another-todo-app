@@ -13,6 +13,7 @@ export default [
       route('create-todo', './routes/create-todo.tsx'),
       route('todo/:todoId', './routes/todo.tsx'),
       route('todo/:todoId/edit', './routes/edit-todo.tsx'),
+      route('todo/:todoId/delete', './routes/delete-todo.tsx'),
     ]),
   ]),
   route('login', './routes/login.tsx'),

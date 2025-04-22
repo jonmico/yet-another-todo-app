@@ -1,7 +1,9 @@
 import { getTodo } from '~/services/todo/get-todo';
 import { tokenCookie } from '~/sessions.server';
 import type { Route } from './+types/todo';
-import { Link } from 'react-router';
+import { Form, Link } from 'react-router';
+
+// TODO: Probably make Delete button a fetcher?
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const token = await tokenCookie.getSession(request.headers.get('Cookie'));
@@ -32,6 +34,12 @@ export default function TodoPage({ loaderData }: Route.ComponentProps) {
       >
         Edit
       </Link>
+      <Form
+        method='delete'
+        action='delete'
+      >
+        <button className='rounded border p-4'>Delete</button>
+      </Form>
     </div>
   );
 }
