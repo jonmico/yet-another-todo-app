@@ -1,7 +1,5 @@
 const URL = import.meta.env.VITE_URL;
 
-// TODO: Finish this.
-
 type DeleteTodoSuccess = {
   message: string;
 };
