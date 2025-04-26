@@ -47,7 +47,6 @@ export async function register(
         id: true,
         email: true,
         createdAt: true,
-        updatedAt: false,
         password: false,
       },
     });

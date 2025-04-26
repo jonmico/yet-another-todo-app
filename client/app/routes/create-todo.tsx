@@ -8,11 +8,14 @@ import FormInput from '~/ui/form-input';
 import ServerError from '~/ui/server-error';
 import FormTextArea from '~/ui/form-text-area';
 
+// TODO: Finish dueDate
+
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
 
   const title = formData.get('title') as string;
   const description = formData.get('description') as string;
+  const dueDate = formData.get('dueDate') as string | undefined;
 
   const token = await tokenCookie.getSession(request.headers.get('Cookie'));
 
@@ -25,7 +28,7 @@ export async function action({ request }: Route.ActionArgs) {
   const result = await createTodo(title, description, tokenString);
 
   if (result.type === 'error') {
-    return { ...result.data };
+    return { error: result.data.error };
   }
 
   const { data } = result;
@@ -79,6 +82,14 @@ function CreateTodoForm({ error }: CreateTodoFormProps) {
             navigationState={navigation.state}
             errorMessage={error?.description}
           />
+          <div>
+            <label htmlFor='dueDate'>Due Date: </label>
+            <input
+              type='date'
+              name='dueDate'
+              id='dueDate'
+            />
+          </div>
           <Button
             type='submit'
             loadingState={navigation.state}

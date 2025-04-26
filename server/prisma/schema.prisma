@@ -8,18 +8,18 @@ datasource db {
 }
 
 model Todo {
-  id          String @id
+  id          String    @id @default(uuid())
   title       String
   description String
   userId      String
-  user        User   @relation(fields: [userId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
+  dueDate     DateTime?
 }
 
 model User {
-  id        String   @id
+  id        String   @id @default(uuid())
   email     String   @unique(map: "User_email_key")
   password  String
   createdAt DateTime @default(now())
-  updatedAt DateTime
   todo      Todo[]
 }
