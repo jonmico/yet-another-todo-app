@@ -26,21 +26,13 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   if (result.type === 'error') {
     console.log('getTodos error:', result.data);
-    return { ...result.data };
+    return { error: result.data.error };
   }
 
   return { todos: result.data.todos };
 }
 
 // FIXME: Why do my redirects for expired tokens not destroySession?
-
-// FIXME: Why is this returning undefined todos with the error?
-/*
-Band-aid fix: Change TodoGrid to accept todos as Todo[] or undefined.
-Handle undefined case in todos.length check.
-
-Update: This might actually be intended.
-*/
 export default function Dashboard({ loaderData }: Route.ComponentProps) {
   return (
     <div className='flex flex-col gap-2'>
