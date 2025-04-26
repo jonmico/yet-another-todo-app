@@ -1,4 +1,4 @@
-import TodoComponent from './todo';
+import TodoGridComponent from './todo-grid-component';
 
 type Todo = {
   id: string;
@@ -17,7 +17,7 @@ export default function TodoGrid({ todos }: TodoGridProps) {
   }
 
   const todoList = todos.map((t) => (
-    <TodoComponent
+    <TodoGridComponent
       key={t.id}
       todo={t}
     />

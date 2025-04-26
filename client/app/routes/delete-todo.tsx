@@ -11,5 +11,9 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   const result = await deleteTodo(tokenString, todoId);
 
+  if (result.type === 'error') {
+    return { error: result.data.error };
+  }
+
   return redirect('/dashboard');
 }

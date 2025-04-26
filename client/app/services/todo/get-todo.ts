@@ -45,7 +45,7 @@ export async function getTodo(
         error: {
           _server:
             err instanceof Error
-              ? `${err.name} ${err.message}`
+              ? `${err.name}: ${err.message}`
               : 'Something went wrong.',
         },
       },

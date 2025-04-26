@@ -1,9 +1,12 @@
 import { getTodo } from '~/services/todo/get-todo';
 import { tokenCookie } from '~/sessions.server';
 import type { Route } from './+types/todo';
-import { Form, Link } from 'react-router';
 
-// TODO: Probably make Delete button a fetcher?
+import { Link, useFetcher, useLoaderData } from 'react-router';
+import FormError from '~/ui/form-error';
+import type { action } from './delete-todo';
+
+// TODO: Style Todo component.
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const token = await tokenCookie.getSession(request.headers.get('Cookie'));
@@ -13,33 +16,47 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   const result = await getTodo(tokenString, params.todoId);
 
   if (result.type === 'error') {
-    return { ...result.data };
+    return { error: result.data.error };
   }
 
   return { todo: result.data.todo };
 }
 
 export default function TodoPage({ loaderData }: Route.ComponentProps) {
-  const { todo } = loaderData;
-
-  if (!todo) return null;
+  const fetcher = useFetcher<typeof action>();
 
   return (
     <div>
-      <div>Title: {todo.title}</div>
-      <div>Description: {todo.description}</div>
+      {fetcher.data && <FormError message={fetcher.data.error._server} />}
+      {loaderData.error && <div>Error: {loaderData.error._server}</div>}
+      <Todo />
       <Link
         to={'edit'}
         className='rounded border px-4 py-1'
       >
         Edit
       </Link>
-      <Form
+      <fetcher.Form
         method='delete'
         action='delete'
       >
         <button className='rounded border p-4'>Delete</button>
-      </Form>
+      </fetcher.Form>
+    </div>
+  );
+}
+
+function Todo() {
+  const loaderData = useLoaderData<typeof loader>();
+
+  const { todo } = loaderData;
+
+  if (!todo) return <div>{loaderData.error._server}</div>;
+
+  return (
+    <div>
+      <div>Title: {todo.title}</div>
+      <div>Description: {todo.description}</div>
     </div>
   );
 }

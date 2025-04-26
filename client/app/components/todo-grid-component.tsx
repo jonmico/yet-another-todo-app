@@ -5,7 +5,7 @@ interface TodoProps {
   todo: Todo;
 }
 
-export default function TodoComponent({ todo }: TodoProps) {
+export default function TodoGridComponent({ todo }: TodoProps) {
   return (
     <li
       className='rounded-sm border border-blue-800/80 transition-colors hover:bg-slate-900'
