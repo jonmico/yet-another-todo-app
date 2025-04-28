@@ -3,8 +3,9 @@ import { z } from 'zod';
 import { db } from '../../db/db';
 
 const CreateTodoSchema = z.object({
-  title: z.string(),
+  title: z.string().optional(),
   description: z.string().min(5),
+  dueDate: z.string().optional(),
 });
 
 export async function createTodo(
@@ -17,6 +18,8 @@ export async function createTodo(
 
     const reqResult = CreateTodoSchema.safeParse(req.body);
 
+    console.log(reqResult);
+
     if (!reqResult.success) {
       const errors = reqResult.error.flatten().fieldErrors;
 
@@ -24,6 +27,7 @@ export async function createTodo(
         error: {
           title: errors.title?.join(', '),
           description: errors.description?.join(', '),
+          dueDate: errors.dueDate?.join(', '),
         },
       });
       return;
@@ -33,6 +37,9 @@ export async function createTodo(
       data: {
         title: reqResult.data.title,
         description: reqResult.data.description,
+        dueDate: reqResult.data.dueDate
+          ? new Date(reqResult.data.dueDate)
+          : undefined,
         userId,
       },
     });

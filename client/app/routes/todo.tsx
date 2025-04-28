@@ -55,8 +55,9 @@ function Todo() {
 
   return (
     <div>
-      <div>Title: {todo.title}</div>
+      {todo.title && <div>Title: {todo.title}</div>}
       <div>Description: {todo.description}</div>
+      {todo.dueDate && <div>Due Date: {todo.dueDate}</div>}
     </div>
   );
 }

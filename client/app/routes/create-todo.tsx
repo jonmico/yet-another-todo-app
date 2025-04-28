@@ -8,8 +8,6 @@ import FormInput from '~/ui/form-input';
 import ServerError from '~/ui/server-error';
 import FormTextArea from '~/ui/form-text-area';
 
-// TODO: Finish dueDate
-
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
 
@@ -25,7 +23,7 @@ export async function action({ request }: Route.ActionArgs) {
     return redirect('/login');
   }
 
-  const result = await createTodo(title, description, tokenString);
+  const result = await createTodo(title, description, dueDate, tokenString);
 
   if (result.type === 'error') {
     return { error: result.data.error };

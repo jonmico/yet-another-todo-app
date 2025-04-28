@@ -11,8 +11,9 @@ type CreateTodoResult =
   | { type: 'error'; data: CreateTodoError };
 
 export async function createTodo(
-  title: string,
+  title: string | undefined,
   description: string,
+  dueDate: string | undefined,
   token: string,
 ): Promise<CreateTodoResult> {
   try {
@@ -26,7 +27,7 @@ export async function createTodo(
       body: JSON.stringify({
         title,
         description,
-        userId: token,
+        dueDate,
       }),
     });
 
