@@ -18,8 +18,6 @@ export async function createTodo(
 
     const reqResult = CreateTodoSchema.safeParse(req.body);
 
-    console.log(reqResult);
-
     if (!reqResult.success) {
       const errors = reqResult.error.flatten().fieldErrors;
 

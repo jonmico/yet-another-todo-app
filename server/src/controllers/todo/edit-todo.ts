@@ -3,8 +3,9 @@ import { z } from 'zod';
 import { db } from '../../db/db';
 
 const EditTodoSchema = z.object({
-  title: z.string(),
+  title: z.string().optional(),
   description: z.string().min(5),
+  dueDate: z.string().optional(),
 });
 
 export async function editTodo(
@@ -22,6 +23,7 @@ export async function editTodo(
         error: {
           title: errors.title?.join(', '),
           description: errors.description?.join(', '),
+          dueDate: errors.dueDate?.join(', '),
         },
       });
       return;
@@ -30,7 +32,7 @@ export async function editTodo(
     const { todoId } = req.params;
     const { userId } = res.locals;
 
-    const todo = await db.todo.findFirst({ where: { id: todoId } });
+    const todo = await db.todo.findUnique({ where: { id: todoId } });
 
     if (!todo) {
       res.status(404).json({ error: { _server: 'todo not found.' } });
@@ -44,13 +46,14 @@ export async function editTodo(
       return;
     }
 
-    const { title, description } = reqResult.data;
+    const { title, description, dueDate } = reqResult.data;
 
     const updatedTodo = await db.todo.update({
       where: { id: todoId },
       data: {
         title,
         description,
+        dueDate: dueDate ? new Date(dueDate) : undefined,
       },
     });
 

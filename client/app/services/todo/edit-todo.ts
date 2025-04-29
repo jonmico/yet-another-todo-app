@@ -21,9 +21,10 @@ type EditTodoResult =
 
 export async function editTodo(
   token: string | undefined,
-  todoId: string,
+  todoId: string | undefined,
   title: string,
   description: string,
+  dueDate: string | undefined,
 ): Promise<EditTodoResult> {
   try {
     const res = await fetch(`${URL}/api/todo/${todoId}/edit`, {
@@ -33,12 +34,8 @@ export async function editTodo(
         'Content-Type': 'application/json',
         Cookie: `token=${token}`,
       },
-      body: JSON.stringify({ title, description }),
+      body: JSON.stringify({ title, description, dueDate }),
     });
-
-    if (!res.ok) {
-      console.log(res);
-    }
 
     if (!res.ok) {
       const error = await res.json();

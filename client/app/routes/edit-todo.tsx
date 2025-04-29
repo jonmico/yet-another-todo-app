@@ -39,6 +39,7 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   const title = formData.get('title') as string;
   const description = formData.get('description') as string;
+  const dueDate = formData.get('dueDate') as string | undefined;
 
   const token = await tokenCookie.getSession(request.headers.get('Cookie'));
 
@@ -46,10 +47,16 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   const { todoId } = params;
 
-  const result = await editTodo(tokenString, todoId, title, description);
+  const result = await editTodo(
+    tokenString,
+    todoId,
+    title,
+    description,
+    dueDate,
+  );
 
   if (result.type === 'error') {
-    return { ...result.data };
+    return { error: result.data.error };
   }
 
   return redirect(`/todo/${todoId}`);
@@ -60,13 +67,19 @@ export default function EditTodo({
   actionData,
 }: Route.ComponentProps) {
   const navigation = useNavigation();
-  console.log(actionData);
+
   if (loaderData.error) {
     return (
       <div>
         <p>No Todo found.</p>
       </div>
     );
+  }
+
+  // This is to format dueDate so the defaultValue attribute works.
+  let dueDateString = '';
+  if (loaderData.todo.dueDate) {
+    dueDateString = loaderData.todo.dueDate.substring(0, 10);
   }
 
   return (
@@ -93,6 +106,15 @@ export default function EditTodo({
               defaultValue={loaderData.todo.description}
               errorMessage={actionData?.error.description}
             />
+            <div>
+              <label htmlFor='dueDate'>Due Date: </label>
+              <input
+                type='date'
+                name='dueDate'
+                id='dueDate'
+                defaultValue={dueDateString}
+              />
+            </div>
             <Button>Edit Todo</Button>
           </fieldset>
         </Form>
