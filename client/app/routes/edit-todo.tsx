@@ -78,6 +78,7 @@ export default function EditTodo({
 
   // This is to format dueDate so the defaultValue attribute works.
   let dueDateString = '';
+
   if (loaderData.todo.dueDate) {
     dueDateString = loaderData.todo.dueDate.substring(0, 10);
   }

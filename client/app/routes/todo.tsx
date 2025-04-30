@@ -83,10 +83,17 @@ interface TodoDueDateProps {
   dueDate: string | undefined;
 }
 
+// FIXME: Date is cursed.
+
 function TodoDueDate(props: TodoDueDateProps) {
   if (!props.dueDate) return null;
 
-  const formattedDate = new Date(props.dueDate).toDateString();
+  let dueDate = new Date(props.dueDate);
+  dueDate = new Date(
+    dueDate.getUTCFullYear(),
+    dueDate.getUTCMonth(),
+    dueDate.getUTCDay(),
+  );
 
-  return <div>{formattedDate}</div>;
+  return <div>{dueDate.toDateString()}</div>;
 }

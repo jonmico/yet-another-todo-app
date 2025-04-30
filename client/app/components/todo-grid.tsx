@@ -1,11 +1,5 @@
+import type { Todo } from '~/types/todo';
 import TodoGridComponent from './todo-grid-component';
-
-type Todo = {
-  id: string;
-  title: string;
-  description: string;
-  userId: string;
-};
 
 interface TodoGridProps {
   todos: Todo[] | undefined;

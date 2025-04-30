@@ -53,7 +53,7 @@ export async function editTodo(
       data: {
         title,
         description,
-        dueDate: dueDate ? new Date(dueDate) : undefined,
+        dueDate: dueDate ? new Date(dueDate) : null,
       },
     });
 
