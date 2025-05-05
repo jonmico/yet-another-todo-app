@@ -8,6 +8,8 @@ export async function loader({ request }: Route.LoaderArgs) {
   if (session.get('userId')) {
     return redirect('/dashboard');
   }
+
+  return null;
 }
 
 export default function Index() {

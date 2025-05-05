@@ -13,6 +13,8 @@ export async function loader({ request }: Route.LoaderArgs) {
   if (session.has('userId')) {
     return redirect('/dashboard');
   }
+
+  return null;
 }
 
 export async function action({ request }: Route.ActionArgs) {
